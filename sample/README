@@ -1,0 +1,90 @@
+Sample TestSwarm Installation Guide (QUnit)
+
+This sample is intended to help getting started quickly with TestSwarm and QUnit
+
+1. TestWarm Configuration
+
+Follow the instructions given in the main TestSwarm README. This README provides additional information and clarifications.
+
+1.1 MySQL
+
+A MySQL database is required for TestSwarm. The basic testswarm database installation is contained in config/testswarm.sql. If you have phpmyadmin installed, simply use it to create an empty "testswarm" database, and select it. Once the newly database is created, click on the "import" tab and import testswarm.sql. This should set up your TestSwarm database correctly. An alternative is by using the command-line mysql client as shown in the main TestSwarm README. If for some reason your database ends up corrupted or if you need to revert back to a clean TestSwarm database, simply import config/reset.sql over your current TestSwarm database.
+
+1.2 Apache
+
+Apache needs to be installed with mod_rewrite enabled. If mod_rewrite doesn't work, you will most likely get various page not found errors. This is because mod_rewrite translates urls according to rules given in .htaccess. If mod_rewrite isn't enabled, those urls won't get translated and Apache will think the application is referring to non-existing urls. On Ubuntu, a simple "sudo a2enmod rewrite" followed by an Apache restart ("sudo invoke-rc.d apache2 restart") should do the trick. Otherwise, look in your httpd.conf or apache2.conf file for a file starting with "LoadModule" and containing "mod_rewrite" and make sure that it is not commented out.
+
+To check that mod_rewrite is enabled, create a simple "info.php" file containing the following line:
+<?php phpinfo(); ?>
+
+And point your browser to it. If mod_rewrite is listed in "loaded modules", then it has been loaded.
+
+However, even if you have mod_rewrite enabled, you need to make sure that your apache configuration will not prevent it from working properly. The default apache configuration sets "AllowOverride" to "None" which prevents mod_rewrite from doing its job. Change "AllowOverride None" to "AllowOverride All" in your httpd.conf or apache2.conf file. Don't forget to restart apache to apply your changes.
+
+1.3 TestSwarm
+
+In this sample, TestSwarm is installed in a testswarm folder and not on the root of the web folder. This requires some modifications in order to work regarding the "context path" that TestSwarm needs to know about. First, find the following lines in .htaccess (a hidden file in Linux, use ctrl+h in Nautilus to show hidden files):
+
+RewriteEngine On
+RewriteBase /
+
+Now change "RewriteBase /" to "RewriteBase /testswarm" or to your installation folder within the web root if you are using a different folder name.
+
+The context path also needs to be edited in config.ini. In our case, config.ini shows:
+
+contextpath = "/testswarm"
+
+That's it. TestSwarm should be properly set up now.
+
+2. Using QUnit with TestSwarm
+
+2.1 Create an Account
+
+In order to send test jobs or to connect test browsers to TestSwarm, you need to create an account. Point your browser to your testswarm installation (in our case, http://localhost/testswarm/) and click on "Signup" on the top left. Enter a username and password and click Signup. Once this is done, use a MySQL client (this can be phpmyadmin) to connect to the database and retrive the authorization token that has been created for your account. Look for "auth" in the users table. The token should look like this: "7a1015b8b0eff140bc870e3b821e3e50b5aa30e6".
+
+2.2 Connect Test Browsers
+
+In order to test, you will need at least one test browser connected to TestSwarm waiting for test jobs. Those browsers need to have a corresponding entry in the database of recognized user agents. If TestSwarm tells you that it doesn't need your help, then it did not recognize your browser's user agent as a target test platform. If you wish to test your code on a browser that is not recognized, you will need to add its user agent in order "useragents" table in the TestSwarm database. For the moment, just use a browser that is recognized, click "start running tests". Leave this browser open so that it can receive test jobs.
+
+2.3 Connect as a User
+
+You can use your account to connect to TestSwarm in order to see the currently connected browsers, manage test jobs and see test results. Point your browser to TestSwarm, click "Login", enter your username and password and you should now be presented with a list of currently connected browsers. The number in the red circle besides browser icons represents the number of browsers of that type currently connected to TestSwarm. Click on your username on top left to see a list of queued jobs.
+
+2.4 Send Test Jobs
+
+Rename "sample/testswarm-sample.pl.txt" to "sample/testswarm-sample.pl" and make it executable. This script is based testswarm-jquery.pl, which would fetch sources from the jQuery git server and send test jobs with it. The perl script basically just collects a couple of parameters needed for adding a new job, constructs a query invoking addjob.php with various parameters, and then uses curl to call addjob.php. The call command will look like this:
+
+curl -d "auth=7a1015b8b0eff140bc870e3b821e3e50b5aa30e6&job_name=QUnit%20Sample%20Test%20Job&max=5&user=username&browsers=all&output=dump&state=addjob&suites[]=math&urls[]=http%3A%2F%2Flocalhost%2Ftestswarm%2Fsample%2Findex%2Ehtml" http://localhost/testswarm/
+
+The parameters used to construct the full query can be modified in testswarm-sample.pl. The most important parameters to modify are obviously the username and the authentication token. Once this is done, you can invoke the script to submit a new test job:
+
+username@computer:~$ ./testswarm-sample.pl
+curl -d "auth=7a1015b8b0eff140bc870e3b821e3e50b5aa30e6&job_name=QUnit%20Sample%20Test%20Job&max=5&user=username&browsers=all&output=dump&state=addjob&suites[]=math&urls[]=http%3A%2F%2Flocalhost%2Ftestswarm%2Fsample%2Findex%2Ehtml" http://localhost/testswarm/
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+115   231    0     8    0   223    252   7046 --:--:-- --:--:-- --:--:--     0
+Results: /job/46/
+
+If you are on Windows, you will probably need to invoke the perl script using perl explicitly ("perl testswarm-sample.pl") instead of calling the file directly as an executable.
+
+If everything went well, you should soon see something like this in your test browser:
+
+History
+
+    * Jun 07 2010 14:53: Running QUnit Sample Test Job Math tests...
+    * Jun 07 2010 14:53: Connected to the swarm.
+
+If you are logged in as a user, you should be able to see the newly submitted job in the list (you may need to refresh the page). You can click on a job's name to get detailed information.
+
+3. Creating Your Own QUnit Tests
+
+The sample QUnit test code in the sample folder is based on the code used in the jQuery QUnit tests. I have removed most of the stuff to make a very basic version in which anybody could start inserting his own unit tests. The QUnit test page can be accessed directly here:
+
+http://localhost/testswarm/sample/
+
+By default, QUnit works client-side. TestSwarm acts as some kind of "meta framework" in which other test frameworks can be inserted. TestSwarm's job is to maintain a connected state with test browsers, distribute test jobs and retrieve test results.
+
+This samples includes a very basic unit test for multiplication and division in Javascript. The tested functions are located in src/math.js. The corresponding unit tests are located in unit/math.js. Those files are included in the test page (sample/index.html). If you want to add your own unit tests, you will need to include them in the test page as well.
+
+For further information on how to write QUnit tests, see http://docs.jquery.com/QUnit
+
