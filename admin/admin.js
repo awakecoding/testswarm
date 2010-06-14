@@ -23,7 +23,7 @@ function getData(params, callback, options)
 	if (!params.action)
 		return alert("Can't get data without an action!");
 
-	$.ajax({"cache":"false", "type":options.type, "data":params, "dataType":"json", "url":"index.php"
+	$.ajax({"cache":"false", "type":options.type, "data":params, "dataType":"json", "url":"admin.php"
 	, "success": function(response)
 	{
 		updateTimer();
