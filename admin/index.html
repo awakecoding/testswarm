@@ -1,0 +1,45 @@
+<html>
+<head>
+	<title>Test Swarm: Admin Control Panel</title>
+	<style type="text/css" title="currentStyle">
+		@import "../css/page.css";
+		@import "../css/table.css";
+	</style>
+	<link type="text/css" href="../css/site.css" rel="stylesheet" />
+	<link type="text/css" href="../css/themes/smoothness/jquery.ui.all.css" rel="stylesheet" />
+	<script type="text/javascript" src="../js/jquery.js"></script>
+	<script type="text/javascript" src="../js/ui/jquery.ui.js"></script>
+	<script type="text/javascript" src="../js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="../js/jquery.jeditable.js"></script>
+	<script type="text/javascript" src="../js/jquery.cookie.js"></script>
+	<script type="text/javascript" src="admin.js"></script>
+</head>
+<body>
+<div class="page">
+<div class="header">
+	<div id="logo"><h1><a href=index.html"><img src="../images/testswarm_logo_wordmark.png"alt="TestSwarm" title="TestSwarm"/></a></h1></div>
+	<div id="auth-status" style="display:none"><p>logged in as <b>IDCC</b> (<a href="#" onclick="logout()">logout</a>)<p></div>
+</div>
+<div class="mainarea">
+	<div id="admin-login-dialog" title="Admin Control Panel Login" style="display:none">
+		<p>please enter your password</p>
+		<form action="" onSubmit="return false;">
+			<label for="username">Username</label><input type="text" class="username" name="username"><br>
+			<label for="password">Password</label><input type="password" class="password" name="password">
+		</form>
+	</div>
+	<div id="admin-tabs" style="display:none">
+		<ul>
+			<li><a href="testreports.html">Test Reports</a></li>
+			<li><a href="jobcontrol.html">Job Control</a></li>
+			<li><a href="useragents.html">User Agents</a></li>
+			<li><a href="settings.html">Settings</a></li>
+		</ul>
+	</div>
+</div>
+<div id="footer" style="display:none">
+	<p>Last query processed in <span id="querySpeed">0</span> seconds.</p>
+</div>
+</div>
+</body>
+</html>

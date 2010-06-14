@@ -1,0 +1,32 @@
+
+.page {
+	margin:auto;
+	padding:auto;
+}
+
+.header {
+	height:120px;
+	background: #F5F5F5;
+}
+
+.header #logo {
+	float:left;
+}
+
+.header #auth-status {
+	float:right;
+	padding-right: 20px;
+	padding-top:80px;
+	font-size: 14px;
+}
+
+.mainarea {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#footer {
+	float:right;
+	padding-right: 10px;
+}
+

@@ -1,0 +1,36 @@
+
+<div>
+	<table cellpadding="0" cellspacing="0" border="0" class="display" id="useragents-table">
+	<thead>
+		<tr>
+			<th>Browser</th>
+			<th>Engine</th>
+			<th>Version</th>
+			<th>Active</th>
+			<th>Current</th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+	<tfoot>
+		<tr>
+			<th>Browser</th>
+			<th>Engine</th>
+			<th>Version</th>
+			<th>Active</th>
+			<th>Current</th>
+		</tr>
+	</tfoot>
+	</table>
+</div>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+	$('#useragents-table').dataTable({
+		"bProcessing": true,
+		"sAjaxSource": 'index.php?action=useragents'
+	});
+});
+
+</script>
