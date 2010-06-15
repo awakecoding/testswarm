@@ -491,3 +491,23 @@ div.box {
 	border: 1px solid #8080FF;
 	background-color: #E5E5FF;
 }
+
+img.success {
+	background-color: #00FF00;
+}
+
+img.failure {
+	background-color: #FF0000;
+}
+
+img.error {
+	background-color: #FFFFFF;
+}
+
+img.none {
+	background-color: #FFFFFF;
+}
+
+img.timeout {
+	background-color: #FFFFFF;
+}

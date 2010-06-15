@@ -2,22 +2,16 @@
 	<table cellpadding="0" cellspacing="0" border="0" class="display" id="testreports-table">
 	<thead>
 		<tr>
-			<th>Name</th>
-			<th>User</th>
-			<th>Status</th>
-			<th>Updated</th>
-			<th>Created</th>
+			<th>Run ID</th>
+			<th>Results</th>
 		</tr>
 	</thead>
 	<tbody>
 	</tbody>
 	<tfoot>
 		<tr>
-			<th>Name</th>
-			<th>User</th>
-			<th>Status</th>
-			<th>Updated</th>
-			<th>Created</th>
+			<th>Run ID</th>
+			<th>Results</th>
 		</tr>
 	</tfoot>
 	</table>
@@ -25,10 +19,64 @@
 
 <script type="text/javascript">
 
-$(document).ready(function(){
-	$('#testreports-table').dataTable({
+var testreports;
+
+function drawResultIcons(nRow, aData, iDisplayIndex)
+{
+	var all_det = aData[1].split('|');
+
+	var result_icons = "";
+
+	var i;
+	for (i = 0; i < all_det.length; i++) {
+		result_icons += drawResultIcon(all_det[i]);
+	}
+
+	$('td:eq(1)', nRow).html(result_icons);
+
+	return nRow;
+}
+
+function drawResultIcon(details)
+{
+	var result_status;
+	var det = details.split(',');
+
+	if ( det[5] == 0 ) {
+		result_status = "none";
+	} else if ( det[5] == 1 ) {
+		result_status = "inprogress";
+	} else if ( det[5] == 2 && det[6] == -1 ) {
+		result_status = "timeout";
+	} else if ( det[5] == 2 && (det[7] > 0 || det[8] == 0) ) {
+		result_status = "error";
+	} else {
+		if (det[6] > 0) {
+			result_status = "failure"
+		} else {
+			result_status = "success";
+		}
+	}
+
+	var result_icon =
+		'<a href=\"../index.php?state=runresults&run_id=' +
+		det[0] + '&client_id=' + det[1] + '\" ' +
+		'<img class=\"' + result_status + '\" ' +
+		'src=\"../images/' + det[3] + '.sm.png\"></a>';
+
+	return result_icon;
+}
+
+$(document).ready(function() {
+	testreports = $('#testreports-table').dataTable({
 		"bProcessing": true,
-		"sAjaxSource": 'admin.php?action=testreports'
+		"bServerSide": true,
+		"sAjaxSource": "admin.php?action=testdetails&jobid=1",
+		"aoColumns": [
+			{ "sClass": "center" },
+			{ "sClass": "center" }
+		],
+		"fnRowCallback": drawResultIcons
 	});
 });
 

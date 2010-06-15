@@ -66,7 +66,7 @@ function authenticate(username, password, callback)
 
 function logout()
 {
-	getData({"action":"logout"}, function(response){
+	getData({"action":"logout"}, function(){
 		$("#admin-tabs").hide();
 		$("#auth-status").hide();
 		loadStatus();
@@ -120,7 +120,5 @@ function average(items)
 }
 
 $(function() {
-
 	loadStatus();
-
 });
