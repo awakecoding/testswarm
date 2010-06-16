@@ -7,6 +7,7 @@
 			<th>Status</th>
 			<th>Updated</th>
 			<th>Created</th>
+			<th>ID</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -18,17 +19,27 @@
 			<th>Status</th>
 			<th>Updated</th>
 			<th>Created</th>
+			<th>ID</th>
 		</tr>
 	</tfoot>
 	</table>
 </div>
-
 <script type="text/javascript">
 
-$(document).ready(function(){
+function drawControls(nRow, aData, iDisplayIndex)
+{
+	job_id = aData[5];
+	job_controls = job_id;
+	$('td:eq(5)', nRow).html(job_controls);
+	return nRow;
+}
+
+$(document).ready(function() {
+	
 	$('#jobcontrol-table').dataTable({
 		"bProcessing": true,
-		"sAjaxSource": 'admin.php?action=jobcontrol'
+		"sAjaxSource": 'admin.php?action=jobcontrol',
+		"fnRowCallback": drawControls
 	});
 });
 

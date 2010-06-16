@@ -215,7 +215,7 @@
 
 	function getJobs()
 	{
-		$query = "SELECT jobs.name,users.name,status,jobs.updated,jobs.created FROM jobs,users WHERE jobs.user_id=users.id";
+		$query = "SELECT jobs.name,users.name,status,jobs.updated,jobs.created,jobs.id FROM jobs,users WHERE jobs.user_id=users.id";
 		$result = mysql_queryf($query);
 
 		$jobs = Array();
@@ -226,6 +226,24 @@
 		}
 
 		echo dataset_encode($jobs);
+	}
+
+	function deleteJob($job_id)
+	{
+		$results = mysql_queryf("SELECT runs.id as id FROM users, jobs, runs WHERE users.name=%s AND jobs.user_id=users.id AND jobs.id=%u AND runs.job_id=jobs.id;", $_SESSION['username'], $job_id);
+
+		if ( mysql_num_rows($results) > 0 ) {
+			mysql_queryf("DELETE FROM run_client WHERE run_id in (select id from runs where job_id=%u);", $job_id);
+			mysql_queryf("DELETE FROM run_useragent WHERE run_id in (select id from runs where job_id=%u);", $job_id);
+			mysql_queryf("DELETE FROM runs WHERE job_id=%u;", $job_id);
+			mysql_queryf("DELETE FROM jobs WHERE id=%u;", $job_id);
+		}
+
+		while ( $row = mysql_fetch_row($results) ) {
+			$run_id = $row[0];
+			mysql_queryf("DELETE FROM run_client WHERE run_id=%u;", $run_id);
+			mysql_queryf("DELETE FROM run_useragent WHERE run_id=%u;", $run_id);
+		}
 	}
 
 	function getSettings()
@@ -281,7 +299,20 @@
 					break;
 
 				case("jobcontrol"):
-					getJobs();
+					switch ($_POST["type"])
+					{
+						case("delete"):
+							if (is_numeric($_POST["job_id"])) {
+								deleteJob($_POST["job_id"]);
+							}
+							exit();
+							break;
+						
+						default:
+							getJobs();
+							exit();
+							break;
+					}
 					exit();
 					break;
 

@@ -12,15 +12,17 @@ function drawResultIcons(nRow, aData, iDisplayIndex)
 {
 	for (i = 1; i < aData.length; i++)
 	{
-		var result_icons = "";
+		var result_icons = "<table>";
 		row_det = aData[i].split('|');
 
+		result_icons += "<tr>";
 		if (row_det.length > 0 && row_det[0].length > 0) {
 			for (j = 0; j < row_det.length; j++) {
 				result_icons += drawResultIcon(row_det[j]);
 			}
 		}
-
+		result_icons += "</tr>";
+		result_icons += "</table>";
 		$('td:eq(' + i + ')', nRow).html(result_icons);
 	}
 	
@@ -52,14 +54,15 @@ function drawResultIcon(details)
 		'<a href=\"../index.php?state=runresults&run_id=' +
 		det[6] + '&client_id=' + det[7] + '\" ' +
 		'<img class=\"' + result_status + '\" ' +
-		'src=\"../images/os/' + det[0] + '.png\"></a>';
+		'src=\"../images/os/' + det[0] + '.png\">' +
+		'</img></a>';
 
 	return result_icon;
 }
 
 function initTestTable(response)
 {
-	table_head = "<tr><th>Job</th>";
+	table_head = "<tr><th>ID</th>";
 	$.each(response.engine, function(i, engine) {
 		table_head += "<th><img src=\"../images/" + engine + ".sm.png\"></th>";
 	});
