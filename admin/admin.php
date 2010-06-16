@@ -119,7 +119,7 @@
 		$query = "SELECT 1,jobs.id,jobs.name,users.name,status,jobs.updated,jobs.created FROM jobs,users WHERE jobs.user_id=users.id";
 		$result = mysql_queryf($query);
 
-		$test_reports = Array();
+		$test_reports = array();
 
 		$i = 0;
 		while ( $row = mysql_fetch_row($result) ) {
@@ -130,7 +130,55 @@
 		echo dataset_encode($test_reports);
 	}
 
-	function getTestDetails($job_id)
+	function getTestEngines()
+	{
+		$query = "SELECT DISTINCT engine FROM useragents WHERE active=1 ORDER BY engine";
+		$result = mysql_queryf($query);
+
+		$test_engines = array();
+		while ( $row = mysql_fetch_row($result) ) {
+			array_push($test_engines, $row[0]);
+		}
+
+		$i = 0;
+		$test_engines_assoc = array();
+		for ($i = 0; $i < count($test_engines); $i++) {
+			$test_engines_assoc[$test_engines[$i]] = $i;
+		}
+		$_SESSION['engines'] = $test_engines_assoc;
+
+		$enginesJSON = array("engine" => $test_engines);
+		print(json_encode($enginesJSON));
+	}
+
+	function getTestResults()
+	{
+		$query = "SELECT useragents.engine,os,useragents.name,status,fail,error,total,run_id,client_id FROM (SELECT os,clients.useragent_id,status,fail,error,total,run_id,client_id FROM (SELECT run_id,client_id,status,fail,error,total FROM run_client) AS runs JOIN clients ON runs.client_id=clients.id) as results JOIN useragents ON results.useragent_id=useragents.id";
+		$result = mysql_queryf($query);
+
+		while ( $row = mysql_fetch_row($result) ) {
+			$ei = $_SESSION['engines'][$row[0]];
+			if (strlen($run_results["$row[7]"][$ei]) > 0) {
+				$run_results["$row[7]"][$ei] .= '|';
+			}
+			$run_results["$row[7]"][$ei] .=
+				"$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8]";
+		}
+
+		$i = 0;
+		foreach ($run_results as $key => $value) {
+			for ($i = 0; $i < count($_SESSION['engines']); $i++) {
+				if (strlen($run_results[$key][$i]) < 1) {
+					$run_results[$key][$i] = "";
+				}
+			}
+			array_unshift($run_results[$key], $key);
+		}
+
+		echo dataset_encode($run_results);
+	}
+
+	function getTestDetailsOld($job_id)
 	{
 		$query = "SELECT run_id,client_id,name,engine,os,status,fail,error,total FROM (SELECT run_id,client_id,useragent_id,os,status,fail,error,total FROM (SELECT run_id,client_id,status,fail,error,total FROM run_client) AS runs JOIN clients ON runs.client_id=clients.id) AS results JOIN useragents ON results.useragent_id=useragents.id";
 		$result = mysql_queryf($query);
@@ -222,11 +270,13 @@
 					exit();
 					break;
 
-				case("testdetails"):
-					$job_id = $_REQUEST["jobid"];
-					if (is_numeric($job_id)) {
-						getTestDetails($job_id);
-					}
+				case("testengines"):
+					getTestEngines();
+					exit();
+					break;
+
+				case("testresults"):
+					getTestResults();
 					exit();
 					break;
 

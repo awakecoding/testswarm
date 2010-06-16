@@ -1,39 +1,29 @@
 <div>
 	<table cellpadding="0" cellspacing="0" border="0" class="display" id="testreports-table">
-	<thead>
-		<tr>
-			<th>Run ID</th>
-			<th>Results</th>
-		</tr>
-	</thead>
-	<tbody>
-	</tbody>
-	<tfoot>
-		<tr>
-			<th>Run ID</th>
-			<th>Results</th>
-		</tr>
-	</tfoot>
 	</table>
 </div>
 
 <script type="text/javascript">
 
+var test_table;
 var testreports;
 
 function drawResultIcons(nRow, aData, iDisplayIndex)
 {
-	var all_det = aData[1].split('|');
+	for (i = 1; i < aData.length; i++)
+	{
+		var result_icons = "";
+		row_det = aData[i].split('|');
 
-	var result_icons = "";
+		if (row_det.length > 0 && row_det[0].length > 0) {
+			for (j = 0; j < row_det.length; j++) {
+				result_icons += drawResultIcon(row_det[j]);
+			}
+		}
 
-	var i;
-	for (i = 0; i < all_det.length; i++) {
-		result_icons += drawResultIcon(all_det[i]);
+		$('td:eq(' + i + ')', nRow).html(result_icons);
 	}
-
-	$('td:eq(1)', nRow).html(result_icons);
-
+	
 	return nRow;
 }
 
@@ -42,16 +32,16 @@ function drawResultIcon(details)
 	var result_status;
 	var det = details.split(',');
 
-	if ( det[5] == 0 ) {
+	if ( det[2] == 0 ) {
 		result_status = "none";
-	} else if ( det[5] == 1 ) {
+	} else if ( det[2] == 1 ) {
 		result_status = "inprogress";
-	} else if ( det[5] == 2 && det[6] == -1 ) {
+	} else if ( det[2] == 2 && det[3] == -1 ) {
 		result_status = "timeout";
-	} else if ( det[5] == 2 && (det[7] > 0 || det[8] == 0) ) {
+	} else if ( det[2] == 2 && (det[4] > 0 || det[5] == 0) ) {
 		result_status = "error";
 	} else {
-		if (det[6] > 0) {
+		if (det[3] > 0) {
 			result_status = "failure"
 		} else {
 			result_status = "success";
@@ -60,24 +50,53 @@ function drawResultIcon(details)
 
 	var result_icon =
 		'<a href=\"../index.php?state=runresults&run_id=' +
-		det[0] + '&client_id=' + det[1] + '\" ' +
+		det[6] + '&client_id=' + det[7] + '\" ' +
 		'<img class=\"' + result_status + '\" ' +
-		'src=\"../images/' + det[3] + '.sm.png\"></a>';
+		'src=\"../images/os/' + det[0] + '.png\"></a>';
 
 	return result_icon;
 }
 
-$(document).ready(function() {
+function initTestTable(response)
+{
+	table_head = "<tr><th>Job</th>";
+	$.each(response.engine, function(i, engine) {
+		table_head += "<th><img src=\"../images/" + engine + ".sm.png\"></th>";
+	});
+	table_head += "</tr>";
+
+	table_body = "<tr><td></td>";
+	$.each(response.engine, function(i, engine) {
+		table_body += "<td></td>";
+	});
+	table_body += "</tr>";
+
+	table_foot = table_head;
+
+	test_table =
+		"<thead>" +
+		table_head +
+		"</thead>" +
+		"<tbody>" +
+		table_body +
+		"</tbody>" +
+		"<tfoot>" +
+		table_foot +
+		"</tfoot>";
+
+	$(test_table).appendTo('#testreports-table');
+
 	testreports = $('#testreports-table').dataTable({
 		"bProcessing": true,
-		"bServerSide": true,
-		"sAjaxSource": "admin.php?action=testdetails&jobid=1",
-		"aoColumns": [
-			{ "sClass": "center" },
-			{ "sClass": "center" }
-		],
+		"sAjaxSource": 'admin.php?action=testresults',
 		"fnRowCallback": drawResultIcons
 	});
+}
+
+$(document).ready(function() {
+
+	getData({"action":"testengines"}, initTestTable, {"type":"post"});
+
 });
 
 </script>
