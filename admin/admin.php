@@ -153,7 +153,7 @@
 
 	function getTestResults()
 	{
-		$query = "SELECT useragents.engine,os,useragents.name,status,fail,error,total,run_id,client_id FROM (SELECT os,clients.useragent_id,status,fail,error,total,run_id,client_id FROM (SELECT run_id,client_id,status,fail,error,total FROM run_client) AS runs JOIN clients ON runs.client_id=clients.id) as results JOIN useragents ON results.useragent_id=useragents.id";
+		$query = "SELECT * FROM (SELECT useragents.engine,os,useragents.name,status,fail,error,total,run_id,client_id FROM (SELECT os,clients.useragent_id,status,fail,error,total,run_id,client_id FROM (SELECT run_id,client_id,status,fail,error,total FROM run_client) AS runs JOIN clients ON runs.client_id=clients.id) AS results JOIN useragents ON results.useragent_id=useragents.id) AS run_results JOIN (SELECT name,id FROM jobs) AS job ON run_results.run_id=job.id";
 		$result = mysql_queryf($query);
 
 		while ( $row = mysql_fetch_row($result) ) {
@@ -162,7 +162,9 @@
 				$run_results["$row[7]"][$ei] .= '|';
 			}
 			$run_results["$row[7]"][$ei] .=
-				"$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8]";
+				"$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8],$row[9],$row[10]";
+			$job_details["$row[7]"][0] = $row[9];
+			$job_details["$row[7]"][1] = $row[10];
 		}
 
 		$i = 0;
@@ -172,45 +174,11 @@
 					$run_results[$key][$i] = "";
 				}
 			}
-			array_unshift($run_results[$key], $key);
+			array_unshift($run_results[$key],
+				$job_details[$key][0] . " \(Run #$key\)");
 		}
 
 		echo dataset_encode($run_results);
-	}
-
-	function getTestDetailsOld($job_id)
-	{
-		$query = "SELECT run_id,client_id,name,engine,os,status,fail,error,total FROM (SELECT run_id,client_id,useragent_id,os,status,fail,error,total FROM (SELECT run_id,client_id,status,fail,error,total FROM run_client) AS runs JOIN clients ON runs.client_id=clients.id) AS results JOIN useragents ON results.useragent_id=useragents.id";
-		$result = mysql_queryf($query);
-
-		$last_run_id = 0;
-		$test_results = Array();
-		$test_details = Array();
-
-		$i = -1;
-		$j = 0;
-
-		while ( $row = mysql_fetch_row($result) )
-		{
-			if ($last_run_id != $row[0]) {
-				$i++;
-				$j = 0;
-				$test_results = Array();
-				$last_run_id = $row[0];
-			}
-
-			if ($j > 0) {
-				$test_results[1] .= '|';
-			}
-
-			$test_results[0] = $last_run_id;
-			$test_results[1] .= "$row[0],$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8]";
-			$j++;
-			
-			$test_details[$i] = $test_results;
-		}
-
-		echo dataset_encode($test_details);
 	}
 
 	function getJobs()

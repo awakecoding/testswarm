@@ -305,3 +305,76 @@ ul.clients li img {
 ul.clients li img.msie {
 	margin-top: -2px;
 }
+
+div.result-icon {
+	width: 48px;
+	height: 64px;
+	float: left;
+	border: 0px;
+	position: relative;
+	text-align: center;
+	margin: 4px;
+}
+
+div.result-icon img {
+	width: 32px;
+	margin-top: 4px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.result-icon span.name {
+	display: block;
+	text-align: center;
+	background: #CCC;
+	background: rgba(39,78,125,0.2);
+	color: #000;
+	font-size: 10px;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	padding: 1px;
+	width: 100%;
+}
+
+div.result-icon span.success {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	color: #FFF;
+	font-size: 12px;
+	padding: 2px 3px;
+	border: 1px solid #303030;
+	background-color: #00FF00;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+div.result-icon span.failure {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	color: #FFF;
+	font-size: 12px;
+	padding: 2px 3px;
+	border: 1px solid #303030;
+	background-color: #FF0000;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+div.result-icon span.timeout {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	color: #FFF;
+	font-size: 12px;
+	padding: 2px 3px;
+	border: 1px solid #303030;
+	background-color: #000000;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
