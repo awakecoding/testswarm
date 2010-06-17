@@ -1,4 +1,4 @@
-var updateRate = 30, timeoutRate = 180;
+var updateRate = 10, timeoutRate = 180;
 
 var run_id, run_url, testTimeout, pauseTimer;
 
