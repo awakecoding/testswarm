@@ -169,6 +169,9 @@
 				"$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8],$row[9],$row[10]";
 			$job_details[$row[7]][0] = $row[9];
 			$job_details[$row[7]][1] = $row[10];
+			$job_details[$row[7]][2] = $row[11];
+			$job_details[$row[7]][3] = $row[12];
+			$job_details[$row[7]][4] = $row[13];
 		}
 
 		foreach ($run_results as $key => $value) {
@@ -176,7 +179,10 @@
 				if (strlen($run_results[$key][$i]) < 1)
 					$run_results[$key][$i] = "";
 			}
-			$run_results[$key][0] = "none";
+			$run_results[$key][0] = $job_details[$key][0] . "," .
+						$job_details[$key][3] . "," .
+						$job_details[$key][4];
+
 			ksort($run_results[$key]);
 		}
 

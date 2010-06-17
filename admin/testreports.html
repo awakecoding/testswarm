@@ -10,6 +10,12 @@ var testreports;
 
 function drawResultIcons(nRow, aData, iDisplayIndex)
 {
+	job_det = aData[0].split(',');
+	job_info =
+		'<a href=\"' + job_det[2] + '\">' + job_det[0] +
+		'<br/>' + job_det[1] + '</a>';
+	$('td:eq(0)', nRow).html(job_info);
+
 	for (i = 1; i < aData.length; i++)
 	{
 		var result_icons = "";
@@ -20,6 +26,9 @@ function drawResultIcons(nRow, aData, iDisplayIndex)
 				result_icons += drawResultIcon(row_det[j]);
 			}
 		}
+
+		if (result_icons == "undefined")
+			result_icons = "";
 
 		$('td:eq(' + i + ')', nRow).html(result_icons);
 	}
@@ -38,7 +47,7 @@ function drawResultIcon(details)
 		result_status = "inprogress";
 	} else if ( det[2] == 2 && det[3] == -1 ) {
 		result_status = "timeout";
-		det[3] = "0";
+		det[5] = 0;
 	} else if ( det[2] == 2 && (det[4] > 0 || det[5] == 0) ) {
 		result_status = "error";
 	} else {
@@ -49,12 +58,13 @@ function drawResultIcon(details)
 		}
 	}
 	
-	if (result_status != "success" && result_status != "failure" && result_status != "timeout") {
+	if (result_status != "success" && result_status != "failure"
+		&& result_status != "timeout" && result_status != "error") {
 		return;
 	}
-	
+
 	var result_icon =
-		'<a href=\"../index.php?state=runresults&run_id=' +
+		'<a class="result-link" href=\"../index.php?state=runresults&run_id=' +
 		det[6] + '&client_id=' + det[7] + '\" ' +
 		'<div class=\"result-icon\">' +
 		'<img src=\"../images/os/' + det[0] + '.sm.png\"/>' +

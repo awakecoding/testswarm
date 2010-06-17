@@ -306,6 +306,10 @@ ul.clients li img.msie {
 	margin-top: -2px;
 }
 
+a.result-link {
+	text-decoration: none;
+}
+
 div.result-icon {
 	width: 48px;
 	height: 64px;
@@ -339,12 +343,11 @@ div.result-icon span.name {
 
 div.result-icon span.success {
 	position: absolute;
-	top: 0px;
-	right: 0px;
+	top: -8px;
+	right: -8px;
 	color: #FFF;
 	font-size: 12px;
-	padding: 2px 3px;
-	border: 1px solid #303030;
+	padding: 4px 3px;
 	background-color: #00FF00;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -353,12 +356,11 @@ div.result-icon span.success {
 
 div.result-icon span.failure {
 	position: absolute;
-	top: 0px;
-	right: 0px;
+	top: -8px;
+	right: -8px;
 	color: #FFF;
 	font-size: 12px;
-	padding: 2px 3px;
-	border: 1px solid #303030;
+	padding: 4px 3px;
 	background-color: #FF0000;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -367,12 +369,11 @@ div.result-icon span.failure {
 
 div.result-icon span.timeout {
 	position: absolute;
-	top: 0px;
-	right: 0px;
+	top: -8px;
+	right: -8px;
 	color: #FFF;
 	font-size: 12px;
-	padding: 2px 3px;
-	border: 1px solid #303030;
+	padding: 4px 3px;
 	background-color: #000000;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
