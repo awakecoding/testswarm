@@ -40,21 +40,35 @@ function drawResultIcon(details)
 {
 	var result_status;
 	var det = details.split(',');
+	var engine = det[0];
+	var status = det[2];
+	var fail = det[3];
+	var error = det[4];
+	var total = det[5];
+	var run_id = det[6];
+	var client_id = det[7];
+	var summary;
 
-	if ( det[2] == 0 ) {
+	if ( status == 0 ) {
 		result_status = "none";
-	} else if ( det[2] == 1 ) {
+	} else if ( status == 1 ) {
 		result_status = "inprogress";
-	} else if ( det[2] == 2 && det[3] == -1 ) {
+	} else if ( status == 2 && fail == -1 ) {
 		result_status = "timeout";
-		det[5] = '...';
-	} else if ( det[2] == 2 && (det[4] > 0 || det[5] == 0) ) {
+		summary = '...';
+	} else if ( status == 2 && (error > 0 || total == 0) ) {
 		result_status = "error";
+		if (error > 0)
+			summary = error;
+		else
+			summary = 0;
 	} else {
-		if (det[3] > 0) {
-			result_status = "failure"
+		if (fail > 0) {
+			result_status = "failure";
+			summary = fail;
 		} else {
 			result_status = "success";
+			summary = total;
 		}
 	}
 	
@@ -65,10 +79,10 @@ function drawResultIcon(details)
 
 	var result_icon =
 		'<a class="result-link" href=\"../index.php?state=runresults&run_id=' +
-		det[6] + '&client_id=' + det[7] + '\" ' +
+		run_id + '&client_id=' + client_id + '\" ' +
 		'<div class=\"result-icon\">' +
-		'<img src=\"../images/os/' + det[0] + '.sm.png\"/>' +
-		'<span class=\"' + result_status + '\">' + det[5] +
+		'<img src=\"../images/os/' + engine + '.sm.png\"/>' +
+		'<span class=\"' + result_status + '\">' + summary +
 		'</span></div></a>';
 
 	return result_icon;
