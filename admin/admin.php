@@ -25,6 +25,7 @@
 					$_SESSION['username'] = $username;
 					$_SESSION['auth'] = "yes";
 					$_SESSION['tab'] = "testreports";
+					$_SESSION['engines'] = "";
 					print(json_encode(Array("status"=>"ok","loginError"=>"false","reason"=>"")));
 					return true;
 				} else {
@@ -41,6 +42,7 @@
 		$_SESSION['username'] = "";
 		$_SESSION['auth'] = "";
 		$_SESSION['tab'] = "";
+		$_SESSION['engines'] = "";
 		session_write_close();
 		$status = Array("status"=>"ok");
 		print(json_encode($status));
@@ -135,47 +137,47 @@
 		$query = "SELECT DISTINCT engine FROM useragents WHERE active=1 ORDER BY engine";
 		$result = mysql_queryf($query);
 
+		$i = 0;
 		$test_engines = array();
 		while ( $row = mysql_fetch_row($result) ) {
-			array_push($test_engines, $row[0]);
+			$test_engines[$i++] = $row[0];
 		}
 
 		$i = 0;
-		$test_engines_assoc = array();
 		for ($i = 0; $i < count($test_engines); $i++) {
-			$test_engines_assoc[$test_engines[$i]] = $i;
+			$_SESSION['engines'][$test_engines[$i]] = $i;
 		}
-		$_SESSION['engines'] = $test_engines_assoc;
 
 		$enginesJSON = array("engine" => $test_engines);
-		print(json_encode($enginesJSON));
+		return json_encode($enginesJSON);
 	}
 
 	function getTestResults()
 	{
+		if (count($_SESSION['engines']) < 1)
+			getTestEngines();
+
 		$query = "SELECT useragents.engine,os,useragents.name,run_client.status,fail,error,total,run_id,client_id,jobs.name,jobs.id,runs.id,runs.name,runs.url FROM run_client,clients,useragents,runs,jobs WHERE (run_client.client_id=clients.id AND clients.useragent_id=useragents.id AND run_client.run_id=runs.id AND runs.job_id=jobs.id) ORDER BY jobs.created DESC, runs.id ASC";
 		$result = mysql_queryf($query);
 
 		while ( $row = mysql_fetch_row($result) ) {
-			$ei = $_SESSION['engines'][$row[0]];
-			if (strlen($run_results["$row[7]"][$ei]) > 0) {
-				$run_results["$row[7]"][$ei] .= '|';
+			$ei = $_SESSION['engines'][$row[0]] + 1;
+			if (strlen($run_results[$row[7]][$ei]) > 0) {
+				$run_results[$row[7]][$ei] .= '|';
 			}
-			$run_results["$row[7]"][$ei] .=
+			$run_results[$row[7]][$ei] .=
 				"$row[1],$row[2],$row[3],$row[4],$row[5],$row[6],$row[7],$row[8],$row[9],$row[10]";
-			$job_details["$row[7]"][0] = $row[9];
-			$job_details["$row[7]"][1] = $row[10];
+			$job_details[$row[7]][0] = $row[9];
+			$job_details[$row[7]][1] = $row[10];
 		}
 
-		$i = 0;
 		foreach ($run_results as $key => $value) {
-			for ($i = 0; $i < count($_SESSION['engines']); $i++) {
-				if (strlen($run_results[$key][$i]) < 1) {
+			for ($i = 1; $i < count($_SESSION['engines']) + 1; $i++) {
+				if (strlen($run_results[$key][$i]) < 1)
 					$run_results[$key][$i] = "";
-				}
 			}
-			array_unshift($run_results[$key],
-				$job_details[$key][0]);
+			$run_results[$key][0] = "none";
+			ksort($run_results[$key]);
 		}
 
 		echo dataset_encode($run_results);
@@ -257,7 +259,7 @@
 					break;
 
 				case("testengines"):
-					getTestEngines();
+					echo getTestEngines();
 					exit();
 					break;
 
