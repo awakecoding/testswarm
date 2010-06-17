@@ -47,7 +47,7 @@ function drawResultIcon(details)
 		result_status = "inprogress";
 	} else if ( det[2] == 2 && det[3] == -1 ) {
 		result_status = "timeout";
-		det[5] = 0;
+		det[5] = '...';
 	} else if ( det[2] == 2 && (det[4] > 0 || det[5] == 0) ) {
 		result_status = "error";
 	} else {
