@@ -153,7 +153,7 @@
 
 	function getTestResults()
 	{
-		$query = "SELECT * FROM (SELECT useragents.engine,os,useragents.name,status,fail,error,total,run_id,client_id FROM (SELECT os,clients.useragent_id,status,fail,error,total,run_id,client_id FROM (SELECT run_id,client_id,status,fail,error,total FROM run_client) AS runs JOIN clients ON runs.client_id=clients.id) AS results JOIN useragents ON results.useragent_id=useragents.id) AS run_results JOIN (SELECT name,id FROM jobs) AS job ON run_results.run_id=job.id";
+		$query = "SELECT useragents.engine,os,useragents.name,run_client.status,fail,error,total,run_id,client_id,jobs.name,jobs.id,runs.id,runs.name,runs.url FROM run_client,clients,useragents,runs,jobs WHERE (run_client.client_id=clients.id AND clients.useragent_id=useragents.id AND run_client.run_id=runs.id AND runs.job_id=jobs.id) ORDER BY jobs.created DESC, runs.id ASC";
 		$result = mysql_queryf($query);
 
 		while ( $row = mysql_fetch_row($result) ) {
@@ -175,7 +175,7 @@
 				}
 			}
 			array_unshift($run_results[$key],
-				$job_details[$key][0] . " \(Run #$key\)");
+				$job_details[$key][0]);
 		}
 
 		echo dataset_encode($run_results);

@@ -38,6 +38,7 @@ function drawResultIcon(details)
 		result_status = "inprogress";
 	} else if ( det[2] == 2 && det[3] == -1 ) {
 		result_status = "timeout";
+		det[3] = "0";
 	} else if ( det[2] == 2 && (det[4] > 0 || det[5] == 0) ) {
 		result_status = "error";
 	} else {
@@ -47,7 +48,11 @@ function drawResultIcon(details)
 			result_status = "success";
 		}
 	}
-
+	
+	if (result_status != "success" && result_status != "failure" && result_status != "timeout") {
+		return;
+	}
+	
 	var result_icon =
 		'<a href=\"../index.php?state=runresults&run_id=' +
 		det[6] + '&client_id=' + det[7] + '\" ' +
@@ -61,7 +66,7 @@ function drawResultIcon(details)
 
 function initTestTable(response)
 {
-	table_head = "<tr><th width=\"200px\">Job</th>";
+	table_head = "<tr><th width=\"300px\">Job</th>";
 	$.each(response.engine, function(i, engine) {
 		table_head += "<th><img src=\"../images/" + engine + ".sm.png\"></th>";
 	});
