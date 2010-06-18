@@ -157,7 +157,7 @@
 		if (count($_SESSION['engines']) < 1)
 			getTestEngines();
 
-		$query = "SELECT useragents.engine,os,useragents.name,run_client.status,fail,error,total,run_id,client_id,jobs.name,jobs.id,runs.id,runs.name,runs.url FROM run_client,clients,useragents,runs,jobs WHERE (run_client.client_id=clients.id AND clients.useragent_id=useragents.id AND run_client.run_id=runs.id AND runs.job_id=jobs.id) ORDER BY jobs.created DESC, runs.id ASC";
+		$query = "SELECT useragents.engine,os,useragents.name,run_client.status,fail,error,total,run_id,client_id,jobs.name,jobs.id,runs.id,runs.name,runs.url FROM run_client,clients,useragents,runs,jobs WHERE (run_client.client_id=clients.id AND clients.useragent_id=useragents.id AND run_client.run_id=runs.id AND runs.job_id=jobs.id)";
 		$result = mysql_queryf($query);
 
 		while ( $row = mysql_fetch_row($result) ) {
@@ -179,14 +179,18 @@
 				if (strlen($run_results[$key][$i]) < 1)
 					$run_results[$key][$i] = "";
 			}
+
 			$run_results[$key][0] = $job_details[$key][0] . "," .
 						$job_details[$key][3] . "," .
 						$job_details[$key][4];
 
+			$run_results[$key][count($_SESSION['engines']) + 1] = $job_details[$key][1];
+			$run_results[$key][count($_SESSION['engines']) + 2] = $job_details[$key][2];
+
 			ksort($run_results[$key]);
 		}
 
-		echo dataset_encode($run_results);
+		echo dataset_encode(array_reverse($run_results));
 	}
 
 	function getJobs()
@@ -224,7 +228,7 @@
 
 	function getSettings()
 	{
-		$query = "SELECT name,auth FROM users";
+		$query = "SELECT name,auth FROM users WHERE users.name='" . $_SESSION['username'] . "'";
 		$result = mysql_queryf($query);
 		$settings_assoc = mysql_fetch_assoc($result);
 		echo dataset_encode_assoc($settings_assoc);

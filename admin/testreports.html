@@ -14,9 +14,10 @@ function drawResultIcons(nRow, aData, iDisplayIndex)
 	job_info =
 		'<a href=\"' + job_det[2] + '\">' + job_det[0] +
 		'<br/>' + job_det[1] + '</a>';
+
 	$('td:eq(0)', nRow).html(job_info);
 
-	for (i = 1; i < aData.length; i++)
+	for (i = 1; i < aData.length - 2; i++)
 	{
 		var result_icons = "";
 		row_det = aData[i].split('|');
@@ -26,9 +27,6 @@ function drawResultIcons(nRow, aData, iDisplayIndex)
 				result_icons += drawResultIcon(row_det[j]);
 			}
 		}
-
-		if (result_icons == "undefined")
-			result_icons = "";
 
 		$('td:eq(' + i + ')', nRow).html(result_icons);
 	}
@@ -74,7 +72,7 @@ function drawResultIcon(details)
 	
 	if (result_status != "success" && result_status != "failure"
 		&& result_status != "timeout" && result_status != "error") {
-		return;
+		return "";
 	}
 
 	var result_icon =
@@ -90,17 +88,19 @@ function drawResultIcon(details)
 
 function initTestTable(response)
 {
-	table_head = "<tr><th width=\"300px\">Job</th>";
+	table_head = "<tr><th width=\"20%\">Job</th>";
 	$.each(response.engine, function(i, engine) {
 		table_head += "<th><img src=\"../images/" + engine + ".sm.png\"></th>";
 	});
-	table_head += "</tr>";
+	table_head += "<th>job_id</th><th>run_id</th></tr>";
 
+	var engines_count = 0;
 	table_body = "<tr><td></td>";
 	$.each(response.engine, function(i, engine) {
 		table_body += "<td></td>";
+		engines_count++;
 	});
-	table_body += "</tr>";
+	table_body += "<td></td><td></td></tr>";
 
 	table_foot = table_head;
 
@@ -122,6 +122,12 @@ function initTestTable(response)
 		"sAjaxSource": 'admin.php?action=testresults',
 		"fnRowCallback": drawResultIcons
 	});
+
+	testreports.fnSetColumnVis(engines_count + 1, false);
+	testreports.fnSetColumnVis(engines_count + 2, false);
+
+	testreports.fnSort([ [engines_count + 1, 'desc'],
+					[engines_count + 2, 'desc'] ]);
 }
 
 $(document).ready(function() {
