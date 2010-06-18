@@ -59,7 +59,7 @@ function authenticate(username, password, callback)
 			callback();
 		}
 		else {
-
+			alert("Authentication Failed!");
 		}
 	}, {"type":"post"});
 }
@@ -88,6 +88,9 @@ function loadStatus()
 				}
 			});
 			$("#admin-tabs").show();
+
+			$("#auth-status").html('<p>logged in as <b>' + response.username +
+				'</b> (<a onclick=\"logout()\">logout</a>)<p>');
 			$("#auth-status").show();
 		}
 		else {

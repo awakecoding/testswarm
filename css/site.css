@@ -398,3 +398,11 @@ div.result-icon span.error {
 	width: 16px;
 	height: 16px;
 }
+
+.result-tooltip {
+	display:none;
+}
+
+.browser-icon-name {
+	display:none;
+}

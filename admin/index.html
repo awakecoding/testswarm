@@ -6,10 +6,12 @@
 		@import "../css/table.css";
 	</style>
 	<link type="text/css" href="../css/site.css" rel="stylesheet" />
+	<link type="text/css" href="../css/jquery.tooltip.css" rel="stylesheet" />
 	<link type="text/css" href="../css/themes/smoothness/jquery.ui.all.css" rel="stylesheet" />
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/ui/jquery.ui.js"></script>
 	<script type="text/javascript" src="../js/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../js/jquery.tooltip.js"></script>
 	<script type="text/javascript" src="../js/jquery.dataTables.js"></script>
 	<script type="text/javascript" src="admin.js"></script>
 </head>
@@ -17,7 +19,7 @@
 <div class="page">
 <div class="header">
 	<div id="logo"><h1><a href=index.html"><img src="../images/testswarm_logo_wordmark.png"alt="TestSwarm" title="TestSwarm"/></a></h1></div>
-	<div id="auth-status" style="display:none"><p>logged in as <b>IDCC</b> (<a href="#" onclick="logout()">logout</a>)<p></div>
+	<div id="auth-status" style="display:none"></div>
 </div>
 <div class="mainarea">
 	<div id="admin-login-dialog" title="Admin Control Panel Login" style="display:none">

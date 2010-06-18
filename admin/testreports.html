@@ -8,6 +8,24 @@
 var test_table;
 var testreports;
 
+function drawHeaderIcons(nRow, aData, iDisplayIndex)
+{
+	for (i = 1; i < aData.length - 2; i++)
+	{
+		$('th:eq(' + i + ')', nRow).each(function(index){
+			$(this).tooltip({
+				delay: 0,
+				showURL: false,
+				bodyHandler: function() {
+					return $('span.browser-icon-name', this).html();
+				}
+			});
+		});
+	}
+
+	return nRow;
+}
+
 function drawResultIcons(nRow, aData, iDisplayIndex)
 {
 	job_det = aData[0].split(',');
@@ -29,8 +47,18 @@ function drawResultIcons(nRow, aData, iDisplayIndex)
 		}
 
 		$('td:eq(' + i + ')', nRow).html(result_icons);
+
+		$('td:eq(' + i + ') a.result-link', nRow).each(function(index){
+			$(this).tooltip({
+				delay: 0,
+				showURL: false,
+				bodyHandler: function() {
+					return $('span.result-tooltip', this).html();
+				}
+			});
+		});
 	}
-	
+
 	return nRow;
 }
 
@@ -38,14 +66,17 @@ function drawResultIcon(details)
 {
 	var result_status;
 	var det = details.split(',');
-	var engine = det[0];
+	var os = det[0];
+	var browser = det[1];
 	var status = det[2];
 	var fail = det[3];
 	var error = det[4];
 	var total = det[5];
 	var run_id = det[6];
 	var client_id = det[7];
-	var summary = new String();
+	var tests_passed;
+	var tests_failed;
+	var summary;
 
 	if ( status == 0 ) {
 		result_status = "none";
@@ -63,9 +94,13 @@ function drawResultIcon(details)
 	} else {
 		if (fail > 0) {
 			result_status = "failure";
+			tests_passed = total - fail;
+			tests_failed = fail;
 			summary = fail;
 		} else {
 			result_status = "success";
+			tests_passed = total;
+			tests_failed = 0;
 			summary = total;
 		}
 	}
@@ -75,13 +110,57 @@ function drawResultIcon(details)
 		return "";
 	}
 
+	var result_tooltip = '<p>';
+
+	var os_name = "";
+
+	if (os == "linux")
+		os_name = "Linux";
+	else if (os == "win7")
+		os_name = "Windows 7";
+	else if (os == "xp")
+		os_name = "Windows XP";
+	else if (os == "osx")
+		os_name = "Mac OS X";
+	else if (os == "osx10.5")
+		os_name = "Mac OS X 10.5";
+	else if (os == "iphone")
+		os_name = "iPhone OS";
+	else if (os == "android")
+		os_name = "Android";
+	else
+		os_name = os;
+
+	result_tooltip += 'Browser: ' + browser + '<br/>';
+	result_tooltip += 'Operating System: ' + os_name + '<br/>';
+	
+	if (result_status == "success" || result_status == "failure") {
+		var success_rate;
+		if (tests_failed < 1)
+			success_rate = 100;
+		else
+			success_rate = Math.round(tests_passed / total * 100 * 10) / 10;
+
+		result_tooltip += 'Success Rate: ' + success_rate + '%<br/>';
+		result_tooltip += 'Tests Passed: ' + tests_passed + '<br/>';
+		result_tooltip += 'Tests Failed: ' + tests_failed + '<br/>';
+		result_tooltip += 'Total Tests: ' + total + '<br/>';
+	} else if (result_status == "timeout") {
+		result_tooltip += 'Tests timed out!<br/>';
+	} else {
+		result_tooltip += 'Error while running tests!<br/>';
+	}
+
+	result_tooltip += '</p>';
+
 	var result_icon =
-		'<a class="result-link" href=\"../index.php?state=runresults&run_id=' +
+		'<a class=\"result-link\" ' +
+		'href=\"../index.php?state=runresults&run_id=' +
 		run_id + '&client_id=' + client_id + '\" ' +
 		'<div class=\"result-icon\">' +
-		'<img src=\"../images/os/' + engine + '.sm.png\"/>' +
-		'<span class=\"' + result_status + '\">' + summary +
-		'</span></div></a>';
+		'<img src=\"../images/os/' + os + '.sm.png\"/>' +
+		'<span class=\"' + result_status + '\">' + summary + '</span></div>' +
+		'<span class=\"result-tooltip\">' + result_tooltip + '</span></a>';
 
 	return result_icon;
 }
@@ -90,7 +169,30 @@ function initTestTable(response)
 {
 	table_head = "<tr><th width=\"16%\">Job</th>";
 	$.each(response.engine, function(i, engine) {
-		table_head += "<th><img src=\"../images/" + engine + ".sm.png\"></th>";
+
+		var browser_family = "";
+		if (engine == "android")
+			browser_family = "Android Browser";
+		else if (engine == "chrome")
+			browser_family = "Google Chrome";
+		else if (engine == "gecko")
+			browser_family = "Mozilla Firefox";
+		else if (engine == "mobilewebkit")
+			browser_family = "Mobile Safari";
+		else if (engine == "msie")
+			browser_family = "Internet Explorer";
+		else if (engine == "presto")
+			browser_family = "Opera";
+		else if (engine == "webkit")
+			browser_family = "Safari";
+		else
+			browser_family = engine;
+
+		table_head +=
+			'<th class=\"browser-icon-header\">' +
+			'<img src=\"../images/' + engine + '.sm.png\">' +
+			'<span class=\"browser-icon-name\">' + browser_family +
+			'</span></th>';
 	});
 	table_head += "<th>job_id</th><th>run_id</th></tr>";
 
@@ -123,14 +225,15 @@ function initTestTable(response)
 		"bProcessing": true,
 		"bLengthChange": false,
 		"sAjaxSource": 'admin.php?action=testresults',
-		"fnRowCallback": drawResultIcons
+		"fnRowCallback": drawResultIcons,
+		"fnHeaderCallback": drawHeaderIcons
 	});
 
 	testreports.fnSetColumnVis(engines_count + 1, false);
 	testreports.fnSetColumnVis(engines_count + 2, false);
 
-	testreports.fnSort([ [engines_count + 1, 'desc'],
-					[engines_count + 2, 'desc'] ]);
+	testreports.fnSort([[engines_count + 1, 'desc'],
+					[engines_count + 2, 'desc']]);
 }
 
 $(document).ready(function() {

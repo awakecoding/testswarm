@@ -88,8 +88,10 @@
 	{
 		$authenticated = "false";
 		$tab = "testreports";
+		$username = "";
 
 		if ( $_SESSION['username'] && $_SESSION['auth'] == 'yes' ) {
+			$username = $_SESSION['username'];
 			$authenticated = "true";
 		}
 
@@ -97,7 +99,9 @@
 			$tab = $_SESSION['tab'];
 		}
 
-		$status = Array("authenticated"=>$authenticated,"tab"=>$tab);
+		$status = array("authenticated"=>$authenticated,
+					"tab"=>$tab, "username"=>$username);
+
 		print(json_encode($status));
 	}
 
@@ -106,7 +110,7 @@
 		$query = "SELECT name,engine,version,active,current FROM useragents";
 		$result = mysql_queryf($query);
 
-		$uas = Array();
+		$uas = array();
 
 		$i = 0;
 		while ( $row = mysql_fetch_row($result) ) {
