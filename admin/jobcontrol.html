@@ -37,7 +37,10 @@ function drawControls(nRow, aData, iDisplayIndex)
 $(document).ready(function() {
 	
 	$('#jobcontrol-table').dataTable({
+		"bSort": false,
+		"bFilter": false,
 		"bProcessing": true,
+		"bLengthChange": false,
 		"sAjaxSource": 'admin.php?action=jobcontrol',
 		"fnRowCallback": drawControls
 	});

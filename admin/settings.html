@@ -22,7 +22,10 @@
 
 $(document).ready(function(){
 	$('#settings-table').dataTable({
+		"bSort": false,
+		"bFilter": false,
 		"bProcessing": true,
+		"bLengthChange": false,
 		"sAjaxSource": 'admin.php?action=settings'
 	});
 });

@@ -21,11 +21,15 @@
 }
 
 .mainarea {
-	padding-left: 10px;
-	padding-right: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#admin-tabs {
+	margin: 10px;
 }
 
 #footer {
 	float:right;
-	padding-right: 10px;
+	margin-right: 10px;
 }

@@ -21,7 +21,7 @@
 					mysql_queryf("DELETE FROM run_client WHERE run_id=%u AND client_id=%u;", $run_id, $row[0]);
 				}
 
-				$query = mysql_queryf("SELECT clients.id FROM users, clients, useragents WHERE clients.useragent_id=useragents.id AND DATE_ADD(clients.updated, INTERVAL 5 minute) > NOW() AND clients.user_id=users.id AND users.name='%u' AND useragents.id=%u AND clients.id<>%u AND clients.id NOT IN (SELECT client_id FROM run_client WHERE run_id=%u)", $username, $useragent_id, $client_id, $run_id);
+				$query = mysql_queryf("SELECT clients.id FROM users, clients, useragents WHERE clients.useragent_id=useragents.id AND DATE_ADD(clients.updated, INTERVAL 5 minute) > NOW() AND clients.user_id=users.id AND users.name='%u' AND useragents.id=%u AND clients.id<>%u AND clients.id NOT IN (SELECT client_id FROM run_client WHERE run_id=%u)", $_SESSION['username'], $useragent_id, $client_id, $run_id);
 
 				if ( $row = mysql_fetch_array($result) ) {
 					# There is another client with the same useragent that did not run the test
@@ -38,7 +38,7 @@
 					}
 				}
 				
-				$query = mysql_queryf("SELECT clients.id FROM users, clients, useragents WHERE clients.useragent_id=useragents.id AND DATE_ADD(clients.updated, INTERVAL 5 minute) > NOW() AND clients.user_id=users.id AND users.name='%u' AND useragents.id=%u AND clients.id<>%u AND clients.id NOT IN (SELECT client_id FROM run_client WHERE run_id=%u)", $username, $useragent_id, $client_id, $run_id);
+				$query = mysql_queryf("SELECT clients.id FROM users, clients, useragents WHERE clients.useragent_id=useragents.id AND DATE_ADD(clients.updated, INTERVAL 5 minute) > NOW() AND clients.user_id=users.id AND users.name='%u' AND useragents.id=%u AND clients.id<>%u AND clients.id NOT IN (SELECT client_id FROM run_client WHERE run_id=%u)", $_SESSION['username'], $useragent_id, $client_id, $run_id);
 
 				if ( $row = mysql_fetch_array($result) ) {
 					# There is another client with the same useragent that did not run the test

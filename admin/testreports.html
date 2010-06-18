@@ -45,7 +45,7 @@ function drawResultIcon(details)
 	var total = det[5];
 	var run_id = det[6];
 	var client_id = det[7];
-	var summary;
+	var summary = new String();
 
 	if ( status == 0 ) {
 		result_status = "none";
@@ -59,7 +59,7 @@ function drawResultIcon(details)
 		if (error > 0)
 			summary = error;
 		else
-			summary = 0;
+			summary = "0";
 	} else {
 		if (fail > 0) {
 			result_status = "failure";
@@ -88,7 +88,7 @@ function drawResultIcon(details)
 
 function initTestTable(response)
 {
-	table_head = "<tr><th width=\"20%\">Job</th>";
+	table_head = "<tr><th width=\"16%\">Job</th>";
 	$.each(response.engine, function(i, engine) {
 		table_head += "<th><img src=\"../images/" + engine + ".sm.png\"></th>";
 	});
@@ -118,7 +118,10 @@ function initTestTable(response)
 	$(test_table).appendTo('#testreports-table');
 
 	testreports = $('#testreports-table').dataTable({
+		"bSort": false,
+		"bFilter": false,
 		"bProcessing": true,
+		"bLengthChange": false,
 		"sAjaxSource": 'admin.php?action=testresults',
 		"fnRowCallback": drawResultIcons
 	});
