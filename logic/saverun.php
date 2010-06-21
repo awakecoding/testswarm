@@ -9,9 +9,10 @@
 
 	# Make sure we've received some results from the client
 	if ( $results ) {
-		mysql_queryf("UPDATE run_client SET status=2, fail=%u, error=%u, total=%u, results=%s WHERE client_id=%u AND run_id=%u LIMIT 1;", $fail, $error, $total, $results, $client_id, $run_id);
+	
+		$result = mysql_queryf("UPDATE run_client SET status=2, fail=%u, error=%u, total=%u, results=%s WHERE client_id=%u AND run_id=%u LIMIT 1;", $fail, $error, $total, $results, $client_id, $run_id);
 
-		if ( mysql_affected_rows() > 0 ) {
+		if ( mysql_affected_rows($result) > 0 ) {
 			# If we're 100% passing we don't need any more runs
 			if ( $total > 0 && $fail == 0 && $error == 0 ) {
 				# Clear out old runs that were bad, since we now have a good one
@@ -43,7 +44,7 @@
 				if ( $row = mysql_fetch_array($result) ) {
 					# There is another client with the same useragent that did not run the test
 				} else {
-					mysql_queryf("UPDATE run_useragent SET completed = completed + 1, status = IF(completed+1<max, 1, 2) WHERE useragent_id=%u AND run_id=%u LIMIT 1;", $useragent_id, $run_id);
+					mysql_queryf("UPDATE run_useragent SET completed = completed + 1, status = 2 WHERE useragent_id=%u AND run_id=%u LIMIT 1;", $useragent_id, $run_id);
 				}
 			}
 		}

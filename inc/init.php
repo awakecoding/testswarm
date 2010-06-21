@@ -27,6 +27,7 @@
 		# TODO: Improve error message quality.
 		exit("Username required. ?user=USERNAME.");
 	}
+	
 	$client_id = preg_replace("/[^0-9]/", "", getItem('client_id', $_REQUEST, ''));
 
 	if ( $client_id ) {
