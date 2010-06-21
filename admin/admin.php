@@ -4,6 +4,7 @@
 	$contextpath = $config['web']['contextpath'];
 	require "../inc/utilities.php";
 	require "../inc/db.php";
+	require "download.php";
 
         function login()
         {
@@ -279,6 +280,13 @@
 
 				case("testresults"):
 					getTestResults();
+					exit();
+					break;
+
+				case("download"):
+					if (is_numeric($_REQUEST["run_id"])) {
+						downloadRunResults($_REQUEST["run_id"]);
+					}
 					exit();
 					break;
 
