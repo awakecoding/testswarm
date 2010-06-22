@@ -285,9 +285,11 @@
 					break;
 
 				case("download"):
-					if (is_numeric($_REQUEST["run_id"])) {
-						downloadRunResults($_REQUEST["run_id"]);
-					}
+					$view = ($_REQUEST["view"] == "1") ? true : false;
+					if (is_numeric($_REQUEST["run_id"]))
+						downloadRunResults($_REQUEST["run_id"], $view);
+					else if (is_numeric($_REQUEST["job_id"]))
+						downloadJobResults($_REQUEST["job_id"]);
 					exit();
 					break;
 

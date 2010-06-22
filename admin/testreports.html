@@ -33,7 +33,9 @@ function drawResultIcons(nRow, aData, iDisplayIndex)
 		'<a href=\"' + job_det[3] + '\">' + job_det[0] +
 		'<br/>' + job_det[2] + '</a>' +
 		'<a style=\"border:none\" href="admin.php?action=download&run_id=' + job_det[1] + '\">' +
-		'  <img style=\"border:none\" src=\"../images/download.png\"/></a>';
+		'<img title=\"download report\" style=\"border:none\" src=\"../images/download.png\"/></a>' +
+		'<a style=\"border:none\" href="admin.php?action=download&run_id=' + job_det[1] + '&view=1\">' +
+		'<img title=\"view report\" style=\"border:none\" src=\"../images/view.png\"/></a>';
 
 	$('td:eq(0)', nRow).html(job_info);
 
@@ -169,7 +171,7 @@ function drawResultIcon(details)
 
 function initTestTable(response)
 {
-	table_head = "<tr><th width=\"16%\">Job</th>";
+	table_head = "<tr><th width=\"20%\">Job</th>";
 	$.each(response.engine, function(i, engine) {
 
 		var browser_family = "";
