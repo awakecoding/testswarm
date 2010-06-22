@@ -13,8 +13,10 @@
 
 		$result = mysql_queryf("SELECT results FROM run_client WHERE run_id=%s", $run_id);
 
+		$temp_file = tempnam(sys_get_temp_dir(), 'ts');
+
 		$zip = new ZipArchive;
-		$archive = $zip->open('/tmp/test.zip', ZipArchive::OVERWRITE);
+		$archive = $zip->open($temp_file, ZipArchive::OVERWRITE);
 
 		if ($archive !== TRUE)
 			return;
@@ -102,6 +104,7 @@
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment; filename="results.zip"');
 		header('Content-Transfer-Encoding: binary');
-		readfile('/tmp/test.zip');
+		readfile($temp_file);
+		unlink($temp_file);
 	}
 ?>
