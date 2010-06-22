@@ -30,8 +30,10 @@ function drawResultIcons(nRow, aData, iDisplayIndex)
 {
 	job_det = aData[0].split(',');
 	job_info =
-		'<a href=\"' + job_det[2] + '\">' + job_det[0] +
-		'<br/>' + job_det[1] + '</a>';
+		'<a href=\"' + job_det[3] + '\">' + job_det[0] +
+		'<br/>' + job_det[2] + '</a>' +
+		'<a style=\"border:none\" href="admin.php?action=download&run_id=' + job_det[1] + '\">' +
+		'  <img style=\"border:none\" src=\"../images/download.png\"/></a>';
 
 	$('td:eq(0)', nRow).html(job_info);
 

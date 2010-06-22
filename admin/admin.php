@@ -186,6 +186,7 @@
 			}
 
 			$run_results[$key][0] = $job_details[$key][0] . "," .
+						$job_details[$key][2] . "," .
 						$job_details[$key][3] . "," .
 						$job_details[$key][4];
 
