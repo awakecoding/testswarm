@@ -159,7 +159,7 @@
 			if ($archive !== TRUE)
 				return;
 
-			$report = generateRunReport($run_id, $view);
+			$report = generateTestReport($run_id, $view);
 			$zip->addFromString("test-report.html", $report->saveHTML());
 			$zip->addEmptyDir('/css');
 			$zip->addFile('../css/qunit.css', '/css/qunit.css');
