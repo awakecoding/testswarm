@@ -4,7 +4,7 @@
 	$contextpath = $config['web']['contextpath'];
 	require "../inc/utilities.php";
 	require "../inc/db.php";
-	require "download.php";
+	require "report.php";
 
         function login()
         {
@@ -284,12 +284,10 @@
 					exit();
 					break;
 
-				case("download"):
+				case("report"):
 					$view = ($_REQUEST["view"] == "1") ? true : false;
-					if (is_numeric($_REQUEST["run_id"]))
-						downloadRunResults($_REQUEST["run_id"], $view);
-					else if (is_numeric($_REQUEST["job_id"]))
-						downloadJobResults($_REQUEST["job_id"]);
+					if (is_numeric($_REQUEST["job_id"]))
+						downloadJobResults($_REQUEST["job_id"], $view);
 					exit();
 					break;
 
