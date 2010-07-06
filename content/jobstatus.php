@@ -63,18 +63,26 @@
 				if ( $addBrowser ) {
 					$header = "<tr><th></th>\n";
 					$last_browser = array();
+	
+					
 					foreach ( $browsers as $browser ) {
-						if ( $last_browser["id"] != $browser["id"] ) {
-							$header .= '<th><div class="browser">' .
+
+					$result2 = mysql_queryf("SELECT clients.os as os FROM clients, run_client WHERE (run_client.client_id=clients.id AND clients.useragent_id=%s AND run_client.run_id=%u) ORDER BY os;", $browser["id"], $row["run_id"]);
+					
+					while ( $row2 = mysql_fetch_assoc($result2) ) {
+
+#	if ($last_browser["id"] != $browser["id"]) {
+							$header .= '<th>' . $row2["os"] . '<div class="browser">' .
 								'<img src="' . $GLOBALS['contextpath'] . '/images/' . $browser["engine"] .
 								'.sm.png" class="browser-icon ' . $browser["engine"] .
 								'" alt="' . $browser["name"] .
-								'" title="' . $browser["name"] .
+								'" title="' . $row2["os"] . '/' . $browser["name"] . 
 								'"/><span class="browser-name">' .
 								preg_replace('/\w+ /', "", $browser["name"]) . ', ' .
 								'</span></div></th>';
 						}
 						$last_browser = $browser;
+#					}
 					}
 					$header .= "</tr>\n";
 					$output = $header . $output;
@@ -86,7 +94,7 @@
 
 			$useragents = array();
 
-			$runResult = mysql_queryf("SELECT run_client.client_id as client_id, run_client.status as status, run_client.fail as fail, run_client.error as error, run_client.total as total, clients.useragent_id as useragent_id FROM run_client, clients WHERE run_client.run_id=%u AND run_client.client_id=clients.id ORDER BY useragent_id;", $row["run_id"]);
+			$runResult = mysql_queryf("SELECT run_client.client_id as client_id, run_client.status as status, run_client.fail as fail, run_client.error as error, run_client.total as total, clients.useragent_id as useragent_id, clients.os as os FROM run_client, clients WHERE run_client.run_id=%u AND run_client.client_id=clients.id ORDER BY useragent_id, os;", $row["run_id"]);
 
 			while ( $ua_row = mysql_fetch_assoc($runResult) ) {
 				if ( !$useragents[ $ua_row['useragent_id'] ] ) {
@@ -114,7 +122,7 @@
 		if ( $useragents[ $row["useragent_id"] ] ) {
 			foreach ( $useragents[ $row["useragent_id"] ] as $ua ) {
 				$status = get_status2(intval($ua["status"]), intval($ua["fail"]), intval($ua["error"]), intval($ua["total"]));
-				if ( $last_browser != $ua["useragent_id"] ) {
+#				if ( $last_browser != $ua["useragent_id"] ) {
 					$output .= "<td class='$status " . $row["browser"] . "'><a href='" . $GLOBALS['contextpath'] . "/?state=runresults&run_id=" . $row["run_id"] . "&client_id=" . $ua["client_id"] . "'>" .
 						($ua["status"] == 2 ?
 							($ua["total"] < 0 ?
@@ -125,7 +133,7 @@
 										$ua["fail"] :
 										$ua["total"])))
 							: "") . "</a></td>\n";
-				}
+#				}
 				$last_browser = $ua["useragent_id"];
 			}
 		} else {
