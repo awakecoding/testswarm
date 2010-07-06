@@ -67,13 +67,23 @@
 		$report_qunit_header->nodeValue = "QUnit Test Report: $job_name";
 		$report_qunit_header = $body->appendChild($report_qunit_header);
 
+		$os_name = array();
+		$os_name['linux'] = "Linux";
+		$os_name['win7'] = "Windows 7";
+		$os_name['xp'] = "Windows XP";
+		$os_name['osx'] = "Mac OS X";
+		$os_name['osx10.5'] = "Mac OS X 10.5";
+		$os_name['iphone'] = "iPhone 0S";
+		$os_name['android'] = "Android";
+
 		$last_run_name = "";
 		$result_runs = mysql_queryf("SELECT id,name FROM runs WHERE job_id=%s", $job_id);
 		while ( $row_runs = mysql_fetch_array($result_runs) )
 		{
 			$run_id = $row_runs[0];
 			$run_name = $row_runs[1];
-			$result = mysql_queryf("SELECT results FROM run_client WHERE run_id=%s", $run_id);
+			//$result = mysql_queryf("SELECT results FROM run_client WHERE run_id=%s", $run_id);
+			$result = mysql_queryf("SELECT results,useragents.engine,os,useragents.name FROM run_client,clients,useragents,runs,jobs WHERE (run_client.client_id=clients.id AND clients.useragent_id=useragents.id AND run_client.run_id=runs.id AND runs.job_id=jobs.id AND runs.id=%s)", $run_id);
 
 			while ( $row = mysql_fetch_array($result) )
 			{
@@ -81,6 +91,10 @@
 				$report_html = $dtd_string . gzdecode($row[0]);
 				$report_html = preg_replace('/<html>/',
 					'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" dir="ltr">', $report_html);
+
+				$browser_name = $row[3];
+				$os = $os_name[$row[2]];
+				if (strlen($os) < 1) $os = $row[2];
 
 				$dom = new domDocument;
 				$dom->loadHTML($report_html);
@@ -120,6 +134,7 @@
 				$report_qunit_banner = $body->appendChild($report_qunit_banner);
 
 				$report_qunit_useragent = $report->importNode($qunit_useragent, true);
+				$report_qunit_useragent->nodeValue = "$browser_name / $os - useragent: " . $report_qunit_useragent->nodeValue;
 				$report_qunit_useragent = $body->appendChild($report_qunit_useragent);
 
 				$report_qunit_tests = $report->importNode($qunit_tests, true);
