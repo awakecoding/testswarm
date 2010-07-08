@@ -34,11 +34,11 @@
 		$owner = ($row[2] == $_SESSION['username']);
 	}
 	
-	function add_browser_info($browsers){
+	function generate_browser_header_row($browsers){
 	  $header = "<tr><th></th>\n";
 		$last_browser = array();
 		foreach ( $browsers as $browser ) {
-			if ( array_key_exists("id", $last_browser) && $last_browser["id"] != $browser["id"] ) {
+			if ( ! array_key_exists("id", $last_browser) || $last_browser["id"] != $browser["id"] ) {
 				$header .= '<th><div class="browser">' .
 					'<img src="' . $GLOBALS['contextpath'] . '/images/' . $browser["engine"] .
 					'.sm.png" class="browser-icon ' . $browser["engine"] .
@@ -46,12 +46,41 @@
 					'" title="' . $browser["name"] .
 					'"/><span class="browser-name">' .
 					preg_replace('/\w+ /', "", $browser["name"]) . ', ' .
-					'</span></div></th>';
+					"</span></div></th>\n";
 			}
 			$last_browser = $browser;
 		}
 		$header .= "</tr>\n";
 		return $header;
+	}
+	
+	function setup_useragents_for_run($run_id) {
+	  $useragents = array();
+
+		$runResult = mysql_queryf("SELECT run_client.client_id as client_id, run_client.status as status, run_client.fail as fail, run_client.error as error, run_client.total as total, clients.useragent_id as useragent_id FROM run_client, clients WHERE run_client.run_id=%u AND run_client.client_id=clients.id ORDER BY useragent_id;", $run_id);
+
+		while ( $ua_row = mysql_fetch_assoc($runResult) ) {
+			if ( ! array_key_exists($ua_row['useragent_id'], $useragents) ) {
+				$useragents[ $ua_row['useragent_id'] ] = array();
+			}
+
+			array_push( $useragents[ $ua_row['useragent_id'] ], $ua_row );
+		}
+		return $useragents;
+	}
+	
+	function get_useragent_results($ua, $row) {
+	  $status = get_status2(intval($ua["status"]), intval($ua["fail"]), intval($ua["error"]), intval($ua["total"]));
+		return "<td class='$status " . $row["browser"] . "'><a href='" . $GLOBALS['contextpath'] . "/?state=runresults&run_id=" . $row["run_id"] . "&client_id=" . $ua["client_id"] . "'>" .
+			($ua["status"] == 2 ?
+				($ua["total"] < 0 ?
+					"Err" :
+					($ua["error"] > 0 ?
+						$ua["error"] :
+						($ua["fail"] > 0 ?
+							$ua["fail"] :
+							$ua["total"])))
+				: "") . "</a></td>\n";
 	}
 
 ?>
@@ -75,66 +104,43 @@
 	$last = "";
 	$output = "";
 	$browsers = array();
-	$addBrowser = true;
 
 	while ( $row = mysql_fetch_assoc($result) ) {
+	  // if we're on to a new run, set up the useragents and start up a new run row
 		if ( $row["run_id"] != $last ) {
-			if ( $last ) {
-				if ( $addBrowser ) {
-					$header = add_browser_info();
-					$output = $header . $output;
-				}
-
-				$output .= "</tr>\n";
-				$addBrowser = false;
-			}
-
-			$useragents = array();
-
-			$runResult = mysql_queryf("SELECT run_client.client_id as client_id, run_client.status as status, run_client.fail as fail, run_client.error as error, run_client.total as total, clients.useragent_id as useragent_id FROM run_client, clients WHERE run_client.run_id=%u AND run_client.client_id=clients.id ORDER BY useragent_id;", $row["run_id"]);
-
-			while ( $ua_row = mysql_fetch_assoc($runResult) ) {
-				if ( ! array_key_exists($ua_row['useragent_id'], $useragents) ) {
-					$useragents[ $ua_row['useragent_id'] ] = array();
-				}
-
-				array_push( $useragents[ $ua_row['useragent_id'] ], $ua_row );
-			}
-
+		  // if we're not just on the first row, close out the last run row
+		  if ($output != "") {
+		    $output .= "</tr>\n";
+		  }
+      $useragents = setup_useragents_for_run($row["run_id"]);
 			$output .= '<tr><th><a href="' . $row["run_url"] . '">' . $row["run_name"] . "</a></th>\n";
 		}
 
-		if ( $addBrowser ) {
-			array_push( $browsers, array(
-				"name" => $row["browsername"],
-				"engine" => $row["browser"],
-				"id" => $row["useragent_id"]
-			) );
-		}
+    // register the browser if it hasn't already been
+    $browser_info = array(
+			"name" => $row["browsername"],
+			"engine" => $row["browser"],
+			"id" => $row["useragent_id"]
+		);
+		
+    if (! in_array($browser_info, $browsers)) {
+		  array_push( $browsers, $browser_info );
+	  }
 
 		#echo "<li>" . $row["browser"] . " (" . get_status(intval($row["status"])) . ")<ul>";
 
 		$last_browser = -1;
-    // error_log("User agents: " + var_dump($useragents));
 		if ( array_key_exists($row["useragent_id"], $useragents) ) {
+		  // this gets the first result sent back per user agent...
+		  // ???: Should we represent the other results? If so, how?
 			foreach ( $useragents[ $row["useragent_id"] ] as $ua ) {
-				$status = get_status2(intval($ua["status"]), intval($ua["fail"]), intval($ua["error"]), intval($ua["total"]));
 				if ( $last_browser != $ua["useragent_id"] ) {
-					$output .= "<td class='$status " . $row["browser"] . "'><a href='" . $GLOBALS['contextpath'] . "/?state=runresults&run_id=" . $row["run_id"] . "&client_id=" . $ua["client_id"] . "'>" .
-						($ua["status"] == 2 ?
-							($ua["total"] < 0 ?
-								"Err" :
-								($ua["error"] > 0 ?
-									$ua["error"] :
-									($ua["fail"] > 0 ?
-										$ua["fail"] :
-										$ua["total"])))
-							: "") . "</a></td>\n";
+          $output .= get_useragent_results($ua, $row);
 				}
 				$last_browser = $ua["useragent_id"];
 			}
 		} else {
-			$output .= "<td class='notstarted notdone'>&nbsp;</td>";
+			$output .= "<td class='notstarted notdone'>&nbsp;</td>\n";
 		}
 
 		#echo "</ul></li>";
@@ -142,13 +148,12 @@
 		$last = $row["run_id"];
 	}
 	
-	if ( $addBrowser ) {
-		$header = add_browser_info($browsers);
-		$output = $header . $output;
-	}
+	// finally generate the browser icon header row
+	$header = generate_browser_header_row($browsers);
+	$output = $header . $output;
 
+  // close out the final run
 	$output .= "</tr>\n";
-	$addBrowser = false;
 
-	echo "$output</tr>\n</tbody>\n</table>";
+	echo "$output</tbody>\n</table>";
 ?>
