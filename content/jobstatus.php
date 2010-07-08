@@ -33,6 +33,26 @@
 		$job_status = get_status(intval($row[1]));
 		$owner = ($row[2] == $_SESSION['username']);
 	}
+	
+	function add_browser_info($browsers){
+	  $header = "<tr><th></th>\n";
+		$last_browser = array();
+		foreach ( $browsers as $browser ) {
+			if ( array_key_exists("id", $last_browser) && $last_browser["id"] != $browser["id"] ) {
+				$header .= '<th><div class="browser">' .
+					'<img src="' . $GLOBALS['contextpath'] . '/images/' . $browser["engine"] .
+					'.sm.png" class="browser-icon ' . $browser["engine"] .
+					'" alt="' . $browser["name"] .
+					'" title="' . $browser["name"] .
+					'"/><span class="browser-name">' .
+					preg_replace('/\w+ /', "", $browser["name"]) . ', ' .
+					'</span></div></th>';
+			}
+			$last_browser = $browser;
+		}
+		$header .= "</tr>\n";
+		return $header;
+	}
 
 ?>
 
@@ -61,22 +81,7 @@
 		if ( $row["run_id"] != $last ) {
 			if ( $last ) {
 				if ( $addBrowser ) {
-					$header = "<tr><th></th>\n";
-					$last_browser = array();
-					foreach ( $browsers as $browser ) {
-						if ( $last_browser["id"] != $browser["id"] ) {
-							$header .= '<th><div class="browser">' .
-								'<img src="' . $GLOBALS['contextpath'] . '/images/' . $browser["engine"] .
-								'.sm.png" class="browser-icon ' . $browser["engine"] .
-								'" alt="' . $browser["name"] .
-								'" title="' . $browser["name"] .
-								'"/><span class="browser-name">' .
-								preg_replace('/\w+ /', "", $browser["name"]) . ', ' .
-								'</span></div></th>';
-						}
-						$last_browser = $browser;
-					}
-					$header .= "</tr>\n";
+					$header = add_browser_info();
 					$output = $header . $output;
 				}
 
@@ -89,7 +94,7 @@
 			$runResult = mysql_queryf("SELECT run_client.client_id as client_id, run_client.status as status, run_client.fail as fail, run_client.error as error, run_client.total as total, clients.useragent_id as useragent_id FROM run_client, clients WHERE run_client.run_id=%u AND run_client.client_id=clients.id ORDER BY useragent_id;", $row["run_id"]);
 
 			while ( $ua_row = mysql_fetch_assoc($runResult) ) {
-				if ( !$useragents[ $ua_row['useragent_id'] ] ) {
+				if ( ! array_key_exists($ua_row['useragent_id'], $useragents) ) {
 					$useragents[ $ua_row['useragent_id'] ] = array();
 				}
 
@@ -110,8 +115,8 @@
 		#echo "<li>" . $row["browser"] . " (" . get_status(intval($row["status"])) . ")<ul>";
 
 		$last_browser = -1;
-
-		if ( $useragents[ $row["useragent_id"] ] ) {
+    // error_log("User agents: " + var_dump($useragents));
+		if ( array_key_exists($row["useragent_id"], $useragents) ) {
 			foreach ( $useragents[ $row["useragent_id"] ] as $ua ) {
 				$status = get_status2(intval($ua["status"]), intval($ua["fail"]), intval($ua["error"]), intval($ua["total"]));
 				if ( $last_browser != $ua["useragent_id"] ) {
@@ -136,6 +141,14 @@
 
 		$last = $row["run_id"];
 	}
+	
+	if ( $addBrowser ) {
+		$header = add_browser_info($browsers);
+		$output = $header . $output;
+	}
+
+	$output .= "</tr>\n";
+	$addBrowser = false;
 
 	echo "$output</tr>\n</tbody>\n</table>";
 ?>
