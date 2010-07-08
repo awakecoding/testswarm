@@ -137,6 +137,7 @@ INSERT INTO `useragents` (`name`, `engine`, `version`, `active`, `current`, `pop
 ('Opera 10.20', 'presto', '^2.2.15$', 1, 0, 1, 0, 0, 0),
 ('Opera 10.50', 'presto', '^2.5.22$', 1, 1, 1, 0, 0, 0),
 ('Chrome 4.0', 'chrome', '^532', 1, 1, 1, 1, 0, 0);
+('Chrome 5.0', 'chrome', '^533', 1, 1, 1, 1, 0, 0);
 
 -- --------------------------------------------------------
 
