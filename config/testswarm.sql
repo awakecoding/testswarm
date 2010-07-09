@@ -120,6 +120,7 @@ INSERT INTO `useragents` (`name`, `engine`, `version`, `active`, `current`, `pop
 ('Mobile Safari 2.2.1', 'mobilewebkit', '^525', 1, 0, 0, 0, 0, 1),
 ('Mobile Safari 3.1.3', 'mobilewebkit', '^528', 1, 1, 0, 0, 0, 1),
 ('Mobile Safari 3.2', 'mobilewebkit', '^531', 1, 0, 0, 0, 1, 1),
+('Mobile Safari 4', 'mobilewebkit', '^540', 1, 0, 0, 0, 0, 1),
 ('Android 1.5/1.6', 'android', '^528.5', 1, 0, 0, 0, 0, 1),
 ('Android 2.1', 'android', '^530.17', 1, 1, 0, 0, 0, 1),
 ('S60 3.2', 's60', '^3.2$', 1, 0, 0, 0, 0, 1),
