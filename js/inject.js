@@ -50,7 +50,7 @@
 
 	// QUnit (jQuery)
 	// http://docs.jquery.com/QUnit
-	if ( typeof QUnit !== "undefined" ) {
+	if ( typeof QUnit !== "undefined" && (typeof CoreTest == "undefined")) {
 		QUnit.done = function(fail, total){
 			submit({
 				fail: fail,
@@ -77,7 +77,35 @@
 
 			return trimSerialize();
 		};
+	// CoreTest (SproutCore)
+	// CoreTest.Runner
+	} else if ( typeof CoreTest !== "undefined") {
+		CoreTest.Runner.oldPlanDidFinish = CoreTest.Runner.planDidFinish;
+		CoreTest.Runner.planDidFinish = function(plan, r){
+			this.oldPlanDidFinish(plan, r);
+			submit({
+				fail: r.failed,
+				error: r.errors,
+				total: r.total
+			});
+		};
 
+		window.TestSwarm.heartbeat();
+		window.TestSwarm.serialize = function(){
+			// Clean up the HTML (remove any un-needed test markup)
+			remove("nothiddendiv");
+			remove("loadediframe");
+			remove("dl");
+			remove("main");
+
+			// Show any collapsed results
+			var ol = document.getElementsByTagName("ol");
+			for ( var i = 0; i < ol.length; i++ ) {
+				ol[i].style.display = "block";
+			}
+
+			return trimSerialize();
+		};
 	// UnitTestJS (Prototype, Scriptaculous)
 	// http://github.com/tobie/unittest_js/tree/master
 	} else if ( typeof Test !== "undefined" && Test && Test.Unit && Test.Unit.runners ) {
@@ -259,7 +287,7 @@
 			clearTimeout( curHeartbeat );
 		}
 
-		var paramItems = (url.split("?")[1] || "").split("&");
+		var paramItems = !!url ? (url.split("?")[1] || "").split("&") : [];
 
 		for ( var i = 0; i < paramItems.length; i++ ) {
 			if ( paramItems[i] ) {
@@ -322,3 +350,4 @@
 	}
 
 })();
+; if ((typeof SC !== 'undefined') && SC && SC.scriptDidLoad) SC.scriptDidLoad('cc');
