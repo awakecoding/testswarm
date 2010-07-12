@@ -1,4 +1,4 @@
-var updateRate = 30, timeoutRate = 180;
+var updateRate = 10, timeoutRate = 180;
 
 var run_id, run_url, testTimeout, pauseTimer;
 
@@ -67,7 +67,8 @@ function runTests( data ) {
 		iframe.className = "test";
 		iframe.src = run_url + (run_url.indexOf("?") > -1 ? "&" : "?") + 
 			"_=" + (new Date).getTime() + "&swarmURL=" +
-			encodeURIComponent(window.location.protocol + "//" + window.location.host + "?" + params + "&state=");
+			encodeURIComponent(window.location.protocol + "//" + window.location.host +
+			window.location.pathname + "?" + params + "&state=");
 		jQuery("#iframes").append( iframe );
 
 		// Timeout after a period of time

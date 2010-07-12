@@ -122,7 +122,8 @@ INSERT INTO `useragents` (`name`, `engine`, `version`, `active`, `current`, `pop
 ('Mobile Safari 3.2', 'mobilewebkit', '^531', 1, 0, 0, 0, 1, 1),
 ('Mobile Safari 4', 'mobilewebkit', '^540', 1, 0, 0, 0, 0, 1),
 ('Android 1.5/1.6', 'android', '^528.5', 1, 0, 0, 0, 0, 1),
-('Android 2.1', 'android', '^530.17', 1, 1, 0, 0, 0, 1),
+('Android 2.1', 'android', '^530.17', 1, 0, 0, 0, 0, 1),
+('Android 2.2', 'android', '^533.1', 1, 1, 0, 0, 0, 1),
 ('S60 3.2', 's60', '^3.2$', 1, 0, 0, 0, 0, 1),
 ('S60 5.0', 's60', '^5.0$', 1, 1, 0, 0, 0, 1),
 ('Opera Mobile 10.0', 'operamobile', '^2.4.18$', 1, 1, 0, 0, 0, 1),
@@ -137,8 +138,9 @@ INSERT INTO `useragents` (`name`, `engine`, `version`, `active`, `current`, `pop
 ('Internet Explorer 8', 'msie', '^8.', 1, 1, 1, 1, 0, 0),
 ('Opera 9.6', 'presto', '^2.1', 1, 0, 1, 0, 0, 0),
 ('Opera 10.20', 'presto', '^2.2.15$', 1, 0, 1, 0, 0, 0),
-('Opera 10.50', 'presto', '^2.5.22$', 1, 1, 1, 0, 0, 0),
-('Chrome 4.0', 'chrome', '^532', 1, 1, 1, 1, 0, 0);
+('Opera 10.50', 'presto', '^2.5.22$', 1, 0, 1, 0, 0, 0),
+('Opera 10.54', 'presto', '^2.5.24$', 1, 1, 1, 0, 0, 0),
+('Chrome 4.0', 'chrome', '^532', 1, 1, 1, 1, 0, 0),
 ('Chrome 5.0', 'chrome', '^533', 1, 1, 1, 1, 0, 0);
 
 -- --------------------------------------------------------

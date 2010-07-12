@@ -1,0 +1,49 @@
+<div>
+	<table cellpadding="0" cellspacing="0" border="0" class="display" id="jobcontrol-table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>User</th>
+			<th>Status</th>
+			<th>Updated</th>
+			<th>Created</th>
+			<th>ID</th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+	<tfoot>
+		<tr>
+			<th>Name</th>
+			<th>User</th>
+			<th>Status</th>
+			<th>Updated</th>
+			<th>Created</th>
+			<th>ID</th>
+		</tr>
+	</tfoot>
+	</table>
+</div>
+<script type="text/javascript">
+
+function drawControls(nRow, aData, iDisplayIndex)
+{
+	job_id = aData[5];
+	job_controls = job_id;
+	$('td:eq(5)', nRow).html(job_controls);
+	return nRow;
+}
+
+$(document).ready(function() {
+	
+	$('#jobcontrol-table').dataTable({
+		"bSort": false,
+		"bFilter": false,
+		"bProcessing": true,
+		"bLengthChange": false,
+		"sAjaxSource": 'admin.php?action=jobcontrol',
+		"fnRowCallback": drawControls
+	});
+});
+
+</script>
