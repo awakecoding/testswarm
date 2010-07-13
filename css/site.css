@@ -225,24 +225,45 @@ table.results div.browser span {
 	display: none;
 }
 
-table.results td.pass {
+table.results div.browser-os {
+	font-size: 0.7em;
+	font-weight: normal;
+}
+
+table.results td.results {
+  padding: 0px;
+  margin: 1px;
+  text-align: center;
+  position: relative;
+}
+
+table.results td.results span {
+  display: block;
+  position: static;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+table.results .pass {
 	background: lightgreen;
 }
 
-table.results td.fail {
+table.results .fail {
 	background: red;
 }
 
-table.results td.progress {
+table.results .progress {
 	background: yellow;
 }
 
-table.results td.timeout, table.results td.error {
+table.results .timeout, table.results .error {
 	background: black;
 	color: white;
 }
 
-table.results td.timeout a, table.results td.error a {
+table.results .timeout a, table.results .error a {
 	color: white;
 }
 
@@ -250,6 +271,7 @@ table.results td {
 	background: gray;
 	padding: 4px 3px;
 	text-align: right;
+	border: 0px solid black;
 }
 
 table.results a {
