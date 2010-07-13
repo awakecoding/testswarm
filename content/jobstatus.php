@@ -111,7 +111,7 @@
 	  foreach ($uas as $ua) {
 	    
   	  $status = get_status2(intval($ua["status"]), intval($ua["fail"]), intval($ua["error"]), intval($ua["total"]));
-  		$out .= "<span class='$status " . $browser["name"] . ' ' . $browser["os"] . "' style='height: " . $result_size . "em;'><a href='" . $GLOBALS['contextpath'] . "/?state=runresults&run_id=" . $row["run_id"] . "&client_id=" . $ua["client_id"] . "'>" .
+  		$out .= "<div class='$status " . $browser["name"] . ' ' . $browser["os"] . "' style='height: " . $result_size . "em;'><a href='" . $GLOBALS['contextpath'] . "/?state=runresults&run_id=" . $row["run_id"] . "&client_id=" . $ua["client_id"] . "'>" .
   			($ua["status"] == 2 ?
   				($ua["total"] < 0 ?
   					"Err" :
@@ -120,7 +120,7 @@
   						($ua["fail"] > 0 ?
   							$ua["fail"] :
   							$ua["total"])))
-  				: "") . "</a></span>\n";
+  				: "") . "</a></div>\n";
 		}
 		return $out . '</td>' . "\n";
 	}

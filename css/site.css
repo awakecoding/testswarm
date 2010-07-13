@@ -234,16 +234,6 @@ table.results td.results {
   padding: 0px;
   margin: 1px;
   text-align: center;
-  position: relative;
-}
-
-table.results td.results span {
-  display: block;
-  position: static;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
 }
 
 table.results .pass {
