@@ -161,11 +161,11 @@ table.display td.center {
 }
 
 tr.odd {
-	background-color: #E2E4FF;
+	background-color: #D8D8D8;
 }
 
 tr.even {
-	background-color: white;
+	background-color: #E2E4FF;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
