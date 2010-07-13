@@ -2,6 +2,11 @@ var updateRate = 10, timeoutRate = 180;
 
 var run_id, run_url, testTimeout, pauseTimer;
 
+if (window.location.href.search(/service=true/i) != -1) {
+  // if this is run via an automated service, don't wait between tests
+  updateRate = 0;
+}
+
 if ( typeof client_id !== "undefined" ) {
 	jQuery( getTests );
 }
