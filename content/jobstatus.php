@@ -48,7 +48,10 @@
 					preg_replace('/\w+ /', "", $browser["name"]) . ', ' .
 					"</span></div><div class='browser-os'>" . 
 					'<img src="' . $GLOBALS['contextpath'] . '/images/os/' . $browser["os"] .
-						'.sm.png"' . "</div></th>\n";
+						'.sm.png"' .
+						'" alt="' . $browser["os"] .
+						'" title="' . $browser["name"] . ' (' . $browser["os"] . ')' . '"' .
+						"</div></th>\n";
 			}
 			$last_browser = $browser;
 		}
@@ -138,7 +141,19 @@
 
 ?>
 
-<h3><?php echo $job_name; ?></h3>
+<?php
+echo '<table border="0"><tr>';
+echo '<td><h3>' . $job_name . '</h3></td>';
+echo '<td><a style="border:none" href="'. $GLOBALS['contextpath'] .
+	'/admin/admin.php?action=report&job_id=' . $job_id . '">' .
+	'<img title="download report" style="border:none" ' .
+	'src="' . $GLOBALS['contextpath'] . '/images/download.png"/></a></td>';
+echo '<td><a style="border:none" href="'. $GLOBALS['contextpath'] .
+	'/admin/admin.php?action=report&job_id=' . $job_id . '&view=1">' .
+	'<img title="download report" style="border:none" ' .
+	'src="' . $GLOBALS['contextpath'] . '/images/view.png"/></a></td>';
+echo '</tr></table>';
+?>
 
 <?php if ( $owner && $_SESSION['auth'] == 'yes' ) { ?>
 <form action="<?php echo $GLOBALS['contextpath']; ?>/" method="POST">
