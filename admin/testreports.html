@@ -32,9 +32,9 @@ function drawResultIcons(nRow, aData, iDisplayIndex)
 	job_info =
 		'<a href=\"' + job_det[3] + '\">' + job_det[0] +
 		'<br/>' + job_det[2] + '</a>' +
-		'<a style=\"border:none\" href="admin.php?action=report&job_id=' + job_det[1] + '\">' +
+		'<a style=\"border:none\" href="admin.php?action=report&run_id=' + job_det[1] + '\">' +
 		'<img title=\"download report\" style=\"border:none\" src=\"../images/download.png\"/></a>' +
-		'<a style=\"border:none\" href="admin.php?action=report&job_id=' + job_det[1] + '&view=1\">' +
+		'<a style=\"border:none\" href="admin.php?action=report&run_id=' + job_det[1] + '&view=1\">' +
 		'<img title=\"view report\" style=\"border:none\" src=\"../images/view.png\"/></a>';
 
 	$('td:eq(0)', nRow).html(job_info);

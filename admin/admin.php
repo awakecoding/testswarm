@@ -232,6 +232,22 @@
 		}
 	}
 
+	function resetJob($job_id)
+	{
+		$results = mysql_queryf("SELECT runs.id as id FROM users, jobs, runs WHERE users.name=%s AND jobs.user_id=users.id AND jobs.id=%u AND runs.job_id=jobs.id;", $_SESSION['username'], $job_id);
+
+		if ( mysql_num_rows($results) > 0 ) {
+			mysql_queryf("UPDATE jobs SET status=0, updated=NOW() WHERE id=%u;", $job_id);
+			mysql_queryf("UPDATE runs SET status=0, updated=NOW() WHERE job_id=%u;", $job_id);
+		}
+
+		while ( $row = mysql_fetch_row($results) ) {
+			$run_id = $row[0];
+			mysql_queryf("DELETE FROM run_client WHERE run_id=%u;", $run_id);
+			mysql_queryf("UPDATE run_useragent SET runs=0, completed=0, status=0, updated=NOW() WHERE run_id=%u;", $run_id);
+		}
+	}
+
 	function getSettings()
 	{
 		$query = "SELECT name,auth FROM users WHERE users.name='" . $_SESSION['username'] . "'";
@@ -288,19 +304,32 @@
 					$view = ($_REQUEST["view"] == "1") ? true : false;
 					if (is_numeric($_REQUEST["job_id"]))
 						downloadJobResults($_REQUEST["job_id"], $view);
+					if (is_numeric($_REQUEST["run_id"]))
+						downloadJobResultsForRunId($_REQUEST["run_id"], $view);
 					exit();
 					break;
 
 				case("jobcontrol"):
-					switch ($_POST["type"])
+					switch ($_REQUEST["type"])
 					{
 						case("delete"):
-							if (is_numeric($_POST["job_id"])) {
-								deleteJob($_POST["job_id"]);
+							if (is_numeric($_REQUEST["job_id"])) {
+								deleteJob($_REQUEST["job_id"]);
+								header("Location: " . $GLOBALS['contextpath'] . "/user/" . $_SESSION['username'] . "/");
 							}
 							exit();
 							break;
-						
+
+						case("reset"):
+							if (is_numeric($_REQUEST["job_id"])) {
+								resetJob($_REQUEST["job_id"]);
+								header("Location: " . $GLOBALS['contextpath'] . "/job/" . $_REQUEST["job_id"] . "/");
+							}
+
+						case("viewall"):
+							header("Location: " . $GLOBALS['contextpath'] . "/user/" . $_SESSION['username'] . "/");
+							break;
+
 						default:
 							getJobs();
 							exit();

@@ -148,7 +148,7 @@
 		return $report;
 	}
 
-	function downloadJobResults($run_id, $view)
+	function downloadJobResultsForRunId($run_id, $view)
 	{
 		$result = mysql_queryf("SELECT job_id,runs.name,jobs.name,jobs.created FROM runs,jobs WHERE runs.job_id=jobs.id AND runs.id=%s LIMIT 1", $run_id);
 
@@ -189,6 +189,16 @@
 			header('Content-Transfer-Encoding: binary');
 			readfile($temp_file);
 			unlink($temp_file);
+		}
+	}
+
+	function downloadJobResults($job_id, $view)
+	{
+		$result = mysql_queryf("SELECT runs.id FROM runs,jobs WHERE runs.job_id=jobs.id AND jobs.id=%s LIMIT 1", $job_id);
+
+		if ( $row = mysql_fetch_array($result) ) {
+			$run_id = $row[0];
+			downloadJobResultsForRunId($run_id, $view);
 		}
 	}
 ?>

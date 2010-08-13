@@ -39,7 +39,7 @@
 		foreach ( $browsers as $browser => $oses ) {
 		  ksort($oses);
 		  foreach ($oses as $os => $browser) {
-				$header .= '<th>' . '<div class="browser ' . $browser["engine"] . ' ' . $browser["os"] . '">' .
+				$header .= '<th class="result-header">' . '<div class="browser ' . $browser["engine"] . ' ' . $browser["os"] . '">' .
 					'<img src="' . $GLOBALS['contextpath'] . '/images/' . $browser["engine"] .
 					'.sm.png" class="browser-icon ' . $browser["engine"] .
 					'" alt="' . $browser["name"] .
@@ -141,29 +141,36 @@
 
 ?>
 
+<h3>
 <?php
-echo '<table border="0"><tr>';
-echo '<td><h3>' . $job_name . '</h3></td>';
-echo '<td><a style="border:none" href="'. $GLOBALS['contextpath'] .
+echo $job_name;
+
+if ( $owner && $_SESSION['auth'] == 'yes' ) {
+echo '<a style="border:none" href="'. $GLOBALS['contextpath'] .
 	'/admin/admin.php?action=report&job_id=' . $job_id . '">' .
-	'<img title="download report" style="border:none" ' .
-	'src="' . $GLOBALS['contextpath'] . '/images/download.png"/></a></td>';
-echo '<td><a style="border:none" href="'. $GLOBALS['contextpath'] .
+	'<img title="download job report" style="border:none" ' .
+	'src="' . $GLOBALS['contextpath'] . '/images/download.png"/></a>';
+echo '<a style="border:none" href="'. $GLOBALS['contextpath'] .
 	'/admin/admin.php?action=report&job_id=' . $job_id . '&view=1">' .
-	'<img title="download report" style="border:none" ' .
-	'src="' . $GLOBALS['contextpath'] . '/images/view.png"/></a></td>';
-echo '</tr></table>';
+	'<img title="view job report" style="border:none" ' .
+	'src="' . $GLOBALS['contextpath'] . '/images/view.png"/></a>';
+echo '<a style="border:none" href="'. $GLOBALS['contextpath'] .
+	'/admin/admin.php?action=jobcontrol&type=reset&job_id=' . $job_id . '">' .
+	'<img title="reset job" style="border:none" ' .
+	'src="' . $GLOBALS['contextpath'] . '/images/reset.png"/></a>';
+echo '<a style="border:none" href="'. $GLOBALS['contextpath'] .
+	'/admin/admin.php?action=jobcontrol&type=delete&job_id=' . $job_id . '">' .
+	'<img title="delete job" style="border:none" ' .
+	'src="' . $GLOBALS['contextpath'] . '/images/delete.png"/></a>';
+echo '<a style="border:none" href="'. $GLOBALS['contextpath'] .
+	'/admin/admin.php?action=jobcontrol&type=viewall">' .
+	'<img title="back to recent jobs" style="border:none" ' .
+	'src="' . $GLOBALS['contextpath'] . '/images/back.png"/></a>';
+}
 ?>
+</h3>
 
-<?php if ( $owner && $_SESSION['auth'] == 'yes' ) { ?>
-<form action="<?php echo $GLOBALS['contextpath']; ?>/" method="POST">
-	<input type="hidden" name="state" value="wipejob"/>
-	<input type="hidden" name="job_id" value="<?php echo $job_id; ?>"/>
-	<input type="submit" name="type" value="delete"/>
-	<input type="submit" name="type" value="reset"/>
-</form>
-<?php } ?>
-
+<div class="result-table">
 <table class="results"><tbody>
 <?php
 
@@ -215,3 +222,4 @@ echo '</tr></table>';
 ?>
 </tbody>
 </table>
+</div>

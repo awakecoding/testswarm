@@ -245,14 +245,17 @@ table.results td.results {
 
 table.results .pass {
 	background: lightgreen;
+	padding: 0px;
 }
 
 table.results .fail {
 	background: red;
+	padding: 0px;
 }
 
 table.results .progress {
 	background: yellow;
+	padding: 0px;
 }
 
 table.results .timeout, table.results .error {
@@ -266,7 +269,6 @@ table.results .timeout a, table.results .error a {
 
 table.results td {
 	background: gray;
-	padding: 4px 3px;
 	text-align: right;
 	border: 0px solid black;
 }
@@ -424,4 +426,21 @@ div.result-icon span.error {
 
 .browser-icon-name {
 	display:none;
+}
+
+div.result-table {
+	margin: auto;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+div.result-table th {
+	width: 500px;
+}
+
+div.result-table th.result-header {
+}
+
+div.result-table td {
+	
 }

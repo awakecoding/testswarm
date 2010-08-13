@@ -72,7 +72,10 @@
 
 	if ( mysql_num_rows($search_result) > 0 ) {
 
-	echo "<br/><h3>Recent Jobs:</h3><table class='results'><tbody>";
+	echo "<br/><h3>Recent Jobs:</h3>";
+
+	echo "<div class=\"result-table\">";
+	echo "<table class='results'><tbody>";
 
 	$output = "";
 	$browsers = array();
@@ -100,14 +103,12 @@
 					$last_browser = array();
 					foreach ( $browsers as $browser ) {
 						if ( $last_browser["id"] != $browser["id"] ) {
-							$header .= '<th><div class="browser">' .
+							$header .= '<th class="result-header"><div class="browser">' .
 								'<img src="' . $GLOBALS['contextpath'] . '/images/' . $browser["engine"] .
 								'.sm.png" class="browser-icon ' . $browser["engine"] .
 								'" alt="' . $browser["name"] .
 								'" title="' . $browser["name"] .
-								'"/><span class="browser-name">' .
-								preg_replace('/\w+ /', "", $browser["name"]) . ', ' .
-								'</span></div></th>';
+								'"/></div>' . $browser["name"] . '</th>';
 						}
 						$last_browser = $browser;
 					}
@@ -183,7 +184,7 @@
 
 	}
 
-	echo "$output</tr>\n</tbody>\n</table>";
+	echo "$output</tr>\n</tbody>\n</table></div>";
 
 	}
 ?>
