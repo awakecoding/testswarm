@@ -219,6 +219,7 @@ table.results div.browser {
 
 table.results div.browser img {
 	width: 20px;
+	margin-right: -6px;
 }
 
 table.results div.browser span {
@@ -228,6 +229,12 @@ table.results div.browser span {
 table.results div.browser-os {
 	font-size: 0.7em;
 	font-weight: normal;
+}
+
+table.results div.browser-os img {
+	width: 20px;
+	margin-left: -6px;
+	margin-top: -4px;
 }
 
 table.results td.results {

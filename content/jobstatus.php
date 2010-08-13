@@ -46,7 +46,9 @@
 					'" title="' . $browser["name"] . ' (' . $browser["os"] . ')' .
 					'"/><span class="browser-name">' .
 					preg_replace('/\w+ /', "", $browser["name"]) . ', ' .
-					"</span></div><div class='browser-os'>" . $browser["os"] . "</div></th>\n";
+					"</span></div><div class='browser-os'>" . 
+					'<img src="' . $GLOBALS['contextpath'] . '/images/os/' . $browser["os"] .
+						'.sm.png"' . "</div></th>\n";
 			}
 			$last_browser = $browser;
 		}
@@ -114,7 +116,7 @@
   		$out .= "<div class='$status " . $browser["name"] . ' ' . $browser["os"] . "' style='height: " . $result_size . "em;'><a href='" . $GLOBALS['contextpath'] . "/?state=runresults&run_id=" . $row["run_id"] . "&client_id=" . $ua["client_id"] . "'>" .
   			($ua["status"] == 2 ?
   				($ua["total"] < 0 ?
-  					"Err" :
+  					"0" :
   					($ua["error"] > 0 ?
   						$ua["error"] :
   						($ua["fail"] > 0 ?
