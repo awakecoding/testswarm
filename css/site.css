@@ -435,12 +435,7 @@ div.result-table {
 }
 
 div.result-table th {
-	width: 500px;
-}
-
-div.result-table th.result-header {
-}
-
-div.result-table td {
-	
+	width: 100px;
+	white-space:nowrap;
+	padding-right: 10px;
 }

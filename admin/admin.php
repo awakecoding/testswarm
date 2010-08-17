@@ -309,6 +309,13 @@
 					exit();
 					break;
 
+				case("jobstatus"):
+					$view = ($_REQUEST["view"] == "1") ? true : false;
+					if (is_numeric($_REQUEST["job_id"]))
+						downloadJobStatus($_REQUEST["job_id"], $view);
+					exit();
+					break;
+
 				case("jobcontrol"):
 					switch ($_REQUEST["type"])
 					{
